@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMPUTER SYSTEMS SERVICING FUNDAMENTALS</title>
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #004481;
+            --secondary-color: #0066cc;
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #d1d9e6;
+            --correct-bg: #d4edda;
+            --correct-border: #c3e6cb;
+            --correct-text: #155724;
+            --wrong-bg: #f8d7da;
+            --wrong-border: #f5c6cb;
+            --wrong-text: #721c24;
+            --highlight-bg: #e2eafc;
+            --timer-bg: #dc3545;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Floating Timer */
+        #timer-container {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background-color: var(--timer-bg);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transition: background-color 0.3s;
+        }
+
+        .timer-warning {
+            animation: blinker 1s linear infinite;
+        }
+
+        @keyframes blinker {
+            50% { opacity: 0.5; }
+        }
+
+        .header {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            padding-top: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        .radio-inline {
+            display: inline-block;
+            margin-right: 20px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .radio-inline input {
+            margin-right: 5px;
+            transform: scale(1.1);
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .option-label {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, border 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: var(--highlight-bg);
+            border-color: var(--secondary-color);
+        }
+
+        .option-label input {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .btn-submit {
+            display: block;
+            width: 100%;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-color);
+        }
+
+        .btn-retake {
+            background-color: #28a745;
+            margin-top: 30px;
+        }
+
+        .btn-retake:hover {
+            background-color: #218838;
+        }
+
+        /* Review Page Styles */
+        .hidden {
+            display: none !important;
+        }
+
+        .fixed-score-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.8rem;
+            font-weight: bold;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .review-container-pad {
+            padding-top: 80px;
+        }
+
+        .summary-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            background-color: var(--highlight-bg);
+            border: 2px solid var(--secondary-color);
+        }
+
+        .summary-info {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .summary-info p {
+            margin: 5px 0;
+            font-size: 1.1rem;
+        }
+
+        .summary-info strong {
+            color: var(--primary-color);
+        }
+
+        .summary-qr {
+            margin: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .review-opt {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        .opt-correct {
+            background-color: var(--correct-bg);
+            border-color: var(--correct-border);
+            color: var(--correct-text);
+            font-weight: bold;
+        }
+
+        .opt-wrong {
+            background-color: var(--wrong-bg);
+            border-color: var(--wrong-border);
+            color: var(--wrong-text);
+        }
+
+        .opt-missed {
+            background-color: #ffffff;
+            border: 2px dashed #28a745;
+            color: var(--correct-text);
+            font-weight: bold;
+        }
+
+        .badge {
+            float: right;
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TIMER -->
+    <div id="timer-container" class="hidden">20:00</div>
+
+    <!-- QUIZ PAGE -->
+    <div id="quiz-page" class="container">
+        <div class="header">
+            <h1>COMPUTER SYSTEMS SERVICING FUNDAMENTALS</h1>
+            <p>Complete the preliminary information and answer all questions within 20 minutes.</p>
+        </div>
+
+        <!-- Fixed Questions (No Numbers) -->
+        <div class="card" id="profile-container">
+            <div class="card-title">Examinee Profile</div>
+            
+            <div class="form-group">
+                <label>LAST NAME</label>
+                <input type="text" id="lastName" placeholder="Enter Last Name" required>
+            </div>
+            
+            <div class="form-group">
+                <label>FIRST NAME</label>
+                <input type="text" id="firstName" placeholder="Enter First Name" required>
+            </div>
+            
+            <div class="form-group">
+                <label>MIDDLE NAME</label>
+                <input type="text" id="middleName" placeholder="Enter Middle Name">
+            </div>
+
+            <div class="form-group">
+                <label>SEX</label>
+                <label class="radio-inline"><input type="radio" name="sex" value="Male"> Male</label>
+                <label class="radio-inline"><input type="radio" name="sex" value="Female"> Female</label>
+            </div>
+
+            <div class="form-group">
+                <label>SECTION</label>
+                <label class="radio-inline"><input type="radio" name="section" value="ICT-A"> ICT-A</label>
+                <label class="radio-inline"><input type="radio" name="section" value="ICT-B"> ICT-B</label>
+                <label class="radio-inline"><input type="radio" name="section" value="ICT-C"> ICT-C</label>
+            </div>
+        </div>
+
+        <!-- Fixed Question Number 1 -->
+        <div class="card">
+            <div class="question-text">1. What is the name of your CSS Trainer/Teacher? <span style="color:var(--secondary-color); font-weight:normal;">(5 Points)</span></div>
+            <input type="text" id="trainerName" placeholder="Enter full name of trainer" required>
+        </div>
+
+        <!-- Random Questions Container -->
+        <div id="questions-container"></div>
+
+        <button class="btn-submit" onclick="submitExam(false)">Submit Exam & View Results</button>
+    </div>
+
+    <!-- REVIEW PAGE -->
+    <div id="review-page" class="hidden">
+        <div class="fixed-score-header" id="score-display">Total Score: 0 / 55</div>
+        <div class="container review-container-pad">
+            
+            <!-- Summary Dashboard injected here -->
+            <div id="summary-container"></div>
+
+            <hr style="margin: 30px 0; border: 0; border-top: 1px solid var(--border-color);">
+
+            <div id="review-container">
+                <!-- Review cards will be injected here -->
+            </div>
+            <button class="btn-submit btn-retake" onclick="retakeExam()">Retake Exam (New Timer & Questions)</button>
+        </div>
+    </div>
+
+    <script>
+        const EXAM_DURATION_MS = 20 * 60 * 1000; // 20 minutes in milliseconds
+        const CORRECT_TRAINER_NAME = "LEMUEL C. CONDES";
+        const STORAGE_KEY = "cssExamState_v2"; // Changed key to avoid state conflicts
+        const MAX_SCORE = 55;
+        
+        let timerInterval;
+        let examState = {
+            endTime: null,
+            submitted: false,
+            score: 0,
+            accomplishedTime: null,
+            profile: { lastName: "", firstName: "", middleName: "", sex: "", section: "", trainerName: "" },
+            quiz: []
+        };
+
+        const rawQuestionData = `What does the acronym RAM stand for in computer systems?|Read Access Memory|Random Access Memory|Run Active Memory|Routing Allocation Media|1
+What is the primary function of pressing Ctrl+Alt+Del in modern Windows operating systems?|To instantly bypass the BIOS password|To permanently format the primary hard drive|To immediately power off the motherboard|To open a security screen allowing access to Task Manager, Lock, or Sign out|3
+Which type of connector is universally used for wired Ethernet networking?|RJ-11|USB Type-C|RJ-45|VGA|2
+What does BIOS stand for?|Basic Input/Output System|Binary Interconnect Operating System|Broad Integrated Output System|Base Internal Operating Software|0
+Which of the following keyboard shortcuts is used to immediately close the active application or window?|Ctrl+Shift+Esc|Windows Key+D|Alt+F4|Ctrl+C|2
+Which built-in Windows command-line utility is used to view a computer's basic network configuration, such as its IP address?|netstat|ipconfig|chkdsk|diskpart|1
+In a Windows environment, what is the standard and most recommended file system for the main OS drive?|FAT32|exFAT|ext4|NTFS|3
+Which hardware device is primarily responsible for connecting different networks together and routing data traffic between them?|Switch|Hub|Router|Network Interface Card (NIC)|2
+What is the name of the main printed circuit board in a computer that connects all the components?|Power Supply Unit|Motherboard|Central Processing Unit|Graphics Card|1
+What does the acronym OS stand for?|Optical System|Open Source|Operating System|Output Synchronization|2
+What is the fundamental difference between a Hard Disk Drive (HDD) and a Solid State Drive (SSD)?|An HDD uses moving magnetic platters, while an SSD uses flash memory with no moving parts.|An HDD is only used for temporary storage, while an SSD is used for permanent storage.|An HDD is much faster and more durable than an SSD.|An HDD connects via USB, while an SSD connects via VGA.|0
+When a technician boots a Windows computer into "Safe Mode," what is the system doing differently?|It loads the operating system with full graphics capabilities and all third-party apps.|It loads only the essential drivers and services required for the OS to run, preventing third-party software from starting.|It automatically encrypts all files on the hard drive.|It completely wipes the hard drive before booting.|1
+In IP networking, what is the purpose of a Subnet Mask?|To hide the user's IP address from the internet.|To determine which part of the IP address represents the network and which part represents the host.|To assign a permanent physical address to the network card.|To block malicious incoming network traffic.|1
+Why is thermal paste applied between the Central Processing Unit (CPU) and the heatsink?|To act as a strong glue to hold the cooler in place.|To fill microscopic air gaps and improve heat transfer from the CPU to the cooler.|To provide electrical conductivity between the motherboard and the CPU.|To lubricate the CPU fan bearings.|1
+How does a DHCP server function on a network?|It translates website names into IP addresses.|It permanently assigns MAC addresses to hardware.|It automatically leases IP addresses and network configurations to client devices.|It scans incoming traffic for viruses.|2
+In command-line network troubleshooting, what is the specific purpose of the ipconfig /release command?|To display the physical MAC address of the network card.|To renew the DHCP lease immediately.|To force the computer to drop its current active IP address provided by the DHCP server.|To clear the DNS resolver cache.|2
+What is the primary function of a software firewall in an operating system?|To monitor and control incoming and outgoing network traffic based on predetermined security rules.|To cool down the computer when it overheats.|To scan the hard drive for fragmented files.|To securely delete user data beyond recovery.|0
+What is the purpose of the Power-On Self-Test (POST) when a computer is turned on?|To load the desktop background.|To verify that essential hardware components are present and functioning properly before loading the OS.|To connect the PC to the local Wi-Fi network.|To update the antivirus definitions.|1
+What does it mean when a computer experiences a "Blue Screen of Death" (BSOD)?|The monitor's color calibration is broken.|The operating system has encountered a critical system error from which it cannot safely recover.|The computer is safely entering sleep mode.|The network connection has been successfully established.|1
+A student installs Windows Server 2016 Standard, but upon booting, they only see a black command prompt window instead of the normal graphical desktop interface. What is the most likely reason for this?|The monitor's graphics drivers are missing.|They chose the "Windows Server 2016 Standard (Core)" option during setup instead of the "(Desktop Experience)".|The motherboard is incompatible with server operating systems.|The installation media was infected with ransomware.|1
+What happens when you format a partition on a hard drive?|All data on that partition is erased and a new file system is established.|The drive is physically repaired from scratches.|The data on the drive is compressed to save space.|The drive is safely removed from the operating system.|0
+Which of the following best describes a MAC address?|A temporary IP address assigned by the router.|The name of the computer on the network.|A unique, permanent physical identifier assigned to a network interface controller (NIC) by the manufacturer.|The password used to access a wireless network.|2
+What is the difference between a LAN and a WAN?|A LAN is wireless, while a WAN requires cables.|A LAN connects devices within a limited area (like a home or office), while a WAN connects networks across a broad geographic area.|A LAN is used exclusively for servers, while a WAN is for regular desktops.|A LAN uses MAC addresses, while a WAN uses only IP addresses.|1
+How does the Domain Name System (DNS) benefit network users?|It provides power over Ethernet cables.|It encrypts passwords stored in the browser.|It allows users to type memorable domain names (like google.com) instead of remembering numerical IP addresses.|It speeds up the processor when downloading files.|2
+Why must a technician use an anti-static wrist strap when handling PC components?|To prevent electrical shock to the technician from the wall outlet.|To prevent electrostatic discharge (ESD) from damaging sensitive electronic components.|To keep the components free from dust and oil.|To improve the grip when holding heavy power supplies.|1
+A user reports that their desktop computer will not turn on. There are no lights, and the fans do not spin. What is the most logical first troubleshooting step?|Reinstall the operating system.|Replace the RAM modules.|Verify the power cable is securely connected to the PC and the wall outlet.|Run a full antivirus scan.|2
+A client cannot reach a company website because the site recently migrated to a new server with a new IP. You suspect the client's PC is still trying to connect to the old, cached IP address. Which command should you apply to fix this?|ipconfig /renew|ipconfig /all|ipconfig /flushdns|ping -t|2
+You turn on a desktop PC. The power lights illuminate, and the internal cooling fans are spinning normally, but there is absolutely no display on the monitor. Which of the following is the most logical first troubleshooting step to apply?|Format the hard drive and reinstall Windows.|Replace the main Power Supply Unit (PSU) immediately.|Verify the monitor is turned on, set to the correct input, and the video cable is securely connected to both the monitor and the PC graphics port.|Upgrade the computer's RAM.|2
+You are trying to install an OS using a bootable Windows USB flash drive. However, immediately after selecting the USB drive from the boot menu, the setup fails to start, and the screen flashes an error like "Operating System Not Found" or simply remains black. How should you address this?|The USB drive's boot sector or installation files are likely corrupted; recreate the bootable USB using a tool like Rufus or the Media Creation Tool.|Enter the BIOS/UEFI settings and permanently disable the hard drive.|The motherboard is permanently broken and must be replaced.|Press Alt+F4 repeatedly to skip the error.|0
+A user complains their computer is suddenly running incredibly slowly. You suspect a rogue application is hogging system resources. Which tool should you use to identify the exact application causing the issue?|Device Manager|System Configuration (msconfig)|Task Manager|Command Prompt|2
+A critical application has frozen, and the user hasn't saved their work. The mouse still moves, but clicking the 'X' does nothing. What is the best method to forcefully close the specific frozen app without restarting the entire PC?|Press Ctrl+Alt+Del, open Task Manager, select the application, and click "End task".|Hold down the physical power button on the PC case for 5 seconds.|Unplug the PC from the wall.|Press Alt+F4.|0
+Upon powering on a desktop, you hear three long, continuous beeps from the motherboard speaker, and the screen remains black. What does this generally indicate?|The Windows installation is corrupted.|There is a hardware error, most commonly related to improperly seated or faulty RAM.|The hard drive is full.|The network cable is disconnected.|1
+A computer displays a yellow warning triangle over the network icon. The Windows troubleshooter reports "Default Gateway is not available." What is the most common cause you should investigate?|The monitor's refresh rate is too low.|The connection between the PC and the router, or a misconfigured router.|A faulty power supply.|A full hard drive.|1
+After successfully installing Windows on your Drive C:, you install a second 1TB hard drive for storage. The BIOS detects it, but it does not appear when you open "This PC". How do you apply a fix so the drive is usable?|Open Task Manager and restart Windows Explorer.|Open Disk Management, initialize the new disk, create a "New Simple Volume," and assign it a drive letter (like D:).|Unplug the PC, remove the CMOS battery for 5 minutes, and put it back.|Use the Command Prompt to run a ping test on the drive.|1
+You insert a bootable Windows USB flash drive into a black USB 2.0 port on the front panel of an older PC, but the computer fails to read it properly during startup. What is a practical step to apply next?|Disassemble the USB drive to check for broken solder joints.|Move the USB drive to a blue USB 3.0 port directly on the motherboard's rear I/O panel to ensure proper detection and faster read speeds.|Reinstall the entire Windows operating system using a DVD.|Download more RAM from the internet.|1
+A computer has lost its network connection and currently has a self-assigned IP address of 169.254.x.x. You want to force the computer to request a new IP from the DHCP server. After typing ipconfig /release, what command must you type next?|ipconfig /all|ping localhost|ipconfig /renew|netstat -a|2
+You need to test if a computer has basic connectivity to the external internet. Which command should you apply in the Command Prompt?|ping 8.8.8.8|ipconfig|chkdsk /f|format C:|0
+You are setting up a peer-to-peer network to transfer files between two Windows PCs. To ensure they can communicate locally without a router, what must you ensure?|They must both have different Operating Systems.|They must both be configured with static IP addresses on the same subnet (e.g., 192.168.1.10 and 192.168.1.11).|They must both have their firewalls completely disabled permanently.|They must have the exact same MAC address.|1
+During OS installation, you accidentally allocated the entire 1TB hard drive to the C: drive. You now want a separate 500GB D: drive for your personal files. How can you solve this partition sizing issue without reinstalling Windows?|Open Disk Management, right-click the C: drive, select "Shrink Volume," and use the newly unallocated space to create a new D: drive.|Physically partition the hard drive by using a secondary SATA cable.|Download a new copy of Windows and install it over the old one.|It is impossible; you must format the drive and start the installation completely from scratch.|0
+You need to securely connect to a corporate network from a public coffee shop Wi-Fi. What technology should you use?|FTP (File Transfer Protocol)|VPN (Virtual Private Network)|DHCP|DNS|1
+During a Windows setup, you select the primary hard drive, but the system refuses to proceed and displays this error: "Windows cannot be installed to this disk. The selected disk is of the GPT partition style." Analyzing this error, what is the core mismatch preventing the installation?|The hard drive is physically damaged and has bad sectors.|The bootable USB installer was created using the legacy MBR partition scheme, but the target hard drive is formatted for modern UEFI/GPT.|The computer does not have enough RAM to complete the installation.|The Windows product key you entered is invalid.|1
+While installing Windows 10, the installation process consistently halts at 60% and displays an error code indicating that "Windows cannot install required files" or that files are corrupted. Analyzing the situation, which combination of components is most likely causing this specific failure?|A faulty graphics card or an outdated monitor.|A corrupted bootable USB drive, defective RAM modules, or failing sectors on the target Hard Drive.|A disconnected network cable or an unresponsive DNS server.|A dead CMOS battery or a missing CPU cooler.|1
+A client brings in a laptop that takes 5 minutes to boot into Windows and struggles to open Google Chrome. You check Task Manager and observe: CPU usage is 15%, Memory usage is 40%, but Disk usage is pinned at 100% constantly. What can you deduce from this data?|The computer needs more RAM to function properly.|The processor is too old and needs replacing.|The mechanical hard drive is a severe bottleneck and is likely failing or overwhelmed; an SSD upgrade is required.|The computer is infected with a network worm.|2
+You are troubleshooting a small office network. PC-A cannot communicate with PC-B. You run ipconfig on both. PC-A has an IP of 192.168.1.50 (Subnet 255.255.255.0). PC-B has an IP of 169.254.10.20. Analyzing this setup, why can't they communicate?|PC-A is blocking PC-B via the Windows Firewall.|PC-B failed to reach the DHCP server and assigned itself an APIPA address, placing it on a completely different logical network than PC-A.|PC-B has a faulty MAC address.|The router is actively blocking IP addresses ending in .20.|1
+A user states their computer has "no sound." You check the physical speakers, and they work on a phone. You check the Windows volume, and it is not muted. You open Device Manager and see a yellow exclamation mark next to the "Realtek High Definition Audio" device. What is the logical conclusion?|The motherboard's audio chip is physically burned out.|The issue is software-based; the audio driver is missing, corrupted, or incompatible.|The Windows Audio Service has been stopped manually.|The user has the wrong default playback device selected.|1
+A client has a limited budget and wants to improve the performance of a 6-year-old desktop currently running an Intel Core i3 processor, 4GB of RAM, and a mechanical HDD. Which upgrade would you recommend as the most cost-effective and instantly impactful solution, and why?|Upgrading the CPU, because it processes data faster.|Replacing the HDD with an SSD, because eliminating the storage bottleneck drastically reduces boot times and improves system responsiveness more than any other single component.|Installing a high-end dedicated GPU, because it offloads work from the CPU.|Buying a new motherboard to prepare for future upgrades.|1
+A user cannot host a multiplayer game because the Windows Firewall is blocking incoming connections on a specific port. The user suggests turning off the firewall entirely so they don't have to deal with it again. How should you evaluate and respond to this request?|Agree with the user; turning off the firewall is standard practice for gaming to reduce lag.|Disagree; advise the user that disabling the firewall exposes the entire system to severe internet threats, and instead configure a specific "Inbound Rule" to open only the required port for the game.|Agree, but only if they promise to turn it back on after they finish playing.|Disagree; tell the user to buy a hardware firewall instead.|1
+A junior technician was tasked with installing Windows on a computer with a fast 250GB SSD and a slower 2TB HDD. They accidentally installed the operating system on the 2TB HDD (Drive D:), leaving the SSD (Drive C:) completely empty. How should you evaluate the impact of this mistake and the necessary solution?|The impact is minimal; the user will just have to remember to save files on the C: drive. Leave it as is.|The impact is severe; system boot times and overall responsiveness will be bottlenecked by the slow HDD. The correct solution is to format both drives and perform a clean install properly onto the SSD.|The impact is positive because the OS now has 2TB of space to grow. Tell the user it was an intentional upgrade.|The impact is moderate; you can simply drag and drop the "Windows" folder from the HDD to the SSD to fix it instantly.|1
+A business asks you to design a backup strategy. They propose storing all their backups on a secondary hard drive inside the same server that holds the original data. How would you evaluate this strategy?|It is an excellent strategy because data transfer between internal drives is very fast.|It is a poor strategy because a physical disaster (fire, theft, severe power surge) or ransomware attack on the server will destroy both the original data and the backup simultaneously.|It is adequate as long as the drives are from different manufacturers.|It is an overly expensive strategy; they should just use USB thumb drives.|1
+You are designing the network layout for a professional competitive gaming tournament where millisecond latency and absolute stability are critical. You must evaluate whether to use high-end Wi-Fi 6 routers or run physical Cat6 Ethernet cables to every computer. Which is the correct choice?|High-end Wi-Fi 6, because it allows players to move their setups easily and has higher theoretical bandwidth than cables.|Physical Cat6 Ethernet cables, because wired connections are immune to wireless interference, offer strictly consistent low latency, and cannot suffer from signal drop-offs.|Wi-Fi 6, because running cables is a tripping hazard and looks unprofessional.|It doesn't matter; both provide the exact same latency and reliability.|1
+While reassembling a desktop PC, a technician notices that the system powers on but immediately shuts down after 3 seconds. Which of the following should be checked first?|SATA data cable connection|RAM seating and CPU fan connector|Power LED connector orientation|Front panel audio header|1
+A student assembled a PC and noticed it doesn’t produce any display. The fans are spinning, but no POST beeps are heard. What is the most likely issue?|The CMOS battery is drained|The RAM module is not properly seated|The VGA cable is defective|The hard drive is not connected|1
+When disassembling a laptop, what should a technician do before removing the keyboard panel?|Remove the CMOS battery|Disconnect the main power source and battery|Ground the screwdriver|Format the hard drive|1
+During PC assembly, applying too much thermal paste could result in:|Lower CPU temperature|System not recognizing the CPU|Short circuits due to conductive overflow|Slower fan RPM|2
+You’re reassembling a desktop and realize one standoff is missing under the motherboard. The PC still boots fine. What’s the risk if you leave it as is?|Reduced RAM performance|Potential shorting on the underside of the board|BIOS corruption|Slower POST time|1
+After assembling a PC, it constantly boots into BIOS and doesn’t detect the hard drive. What should be checked first?|Boot priority order|SATA controller mode (AHCI/IDE)|Secure Boot setting|CMOS battery voltage|1
+A user upgraded to an SSD but forgot to configure BIOS. The system still boots slowly. Which BIOS setting could improve performance?|Change SATA mode from IDE to AHCI|Disable UEFI boot|Enable CSM|Lower the DRAM frequency|0
+A computer constantly loses date and time after shutdown. The technician should:|Reset BIOS to default|Replace the CMOS battery|Disable Fast Boot|Enable Secure Boot|1
+You want to boot from USB but it doesn’t appear in the boot list. The reason might be:|USB is not formatted in FAT32|Legacy USB support is disabled in BIOS|USB port is 3.0 instead of 2.0|BIOS password is enabled|1
+Which BIOS setting should be enabled to install Windows 11?|Legacy Boot|TPM 2.0 and Secure Boot|IDE controller|Fast Boot|1
+You are tasked to create a bootable USB for Windows 10 installation. Which format type must be chosen for UEFI-based systems?|NTFS|FAT32|exFAT|ReFS|1
+A bootable USB was created using Rufus but fails to boot. Which step should you verify first?|Partition scheme compatibility with BIOS mode|USB label name|Windows version ISO integrity|USB port speed|0
+A technician wants to make a universal USB installer that can handle both BIOS and UEFI systems. What should be the best partition scheme?|GPT only|MBR only|MBR for BIOS and UEFI|NTFS partition with UEFI mode|2
+While creating a bootable USB, the system prompts “Access Denied.” What’s the most logical cause?|USB drive is full|Insufficient administrative privileges|Antivirus interference|Outdated ISO file|1
+A student created a bootable USB but accidentally removed it mid-process. What happens when used for installation?|It boots normally but crashes after setup|BIOS won’t detect it|Missing boot sector error|Only half of the OS installs|2
+During Windows installation, the installer reports “Windows cannot be installed to this disk. The selected disk has an MBR partition table.” The system uses UEFI. What should be done?|Change BIOS to Legacy mode|Repartition the disk as GPT|Disable Secure Boot|Format only Drive C|1
+You are installing Windows on a brand-new SSD. The setup shows multiple “Unallocated Spaces.” What is the best practice?|Create one partition for the entire drive|Let Windows automatically partition it|Manually create system and data partitions|Delete all and install on existing ones|1
+A user wants to keep personal files but reinstall Windows. Which installation option preserves them?|Custom Install|Clean Install|Upgrade Install|Express Setup|2
+During setup, the installer cannot detect the hard drive. The least likely cause is:|Missing storage driver|Drive physically disconnected|Outdated BIOS|Defective GPU|3
+When partitioning a 1TB drive for both OS and data, which setup is best?|One 1TB C: partition|Two partitions – 250GB (OS) and 750GB (Data)|500GB each for OS and Data|Multiple 100GB partitions|1
+After Windows installation, the system has no sound. What is the best initial action?|Run Windows Update|Reinstall the OS|Use Snappy Driver Installer|Replace the sound card|2
+A PC shows “Unknown Device” in Device Manager. Which driver installation method would identify it fastest?|Manual download from manufacturer|Snappy Driver Installer|Windows Update|Generic driver installation|1
+DriverPack Solution installed network drivers successfully, but the internet still doesn’t work. What should be checked next?|MAC address|IP configuration settings|Driver signature enforcement|BIOS security settings|1
+You downloaded a driver online, but Windows warns it’s unsigned. What’s the safest next action?|Ignore and install|Verify its checksum and publisher|Turn off Secure Boot|Use Compatibility Mode|1
+When installing GPU drivers, the display goes black. What should be done?|Restart in Safe Mode and roll back the driver|Wait for installation to finish|Clear CMOS|Reformat the drive|0
+A student used both Snappy and DriverPack Solution. Afterward, the PC became unstable. Why?|Conflicting or redundant drivers were installed|BIOS settings were reset|RAM was corrupted|Windows version was downgraded|0
+Which situation requires manual driver download from the internet rather than third-party tools?|Laptop with brand-specific function keys|Standard desktop PC|USB printer|Generic network adapter|0
+When downloading drivers manually, which site should always be preferred?|Third-party driver aggregator|Manufacturer’s official website|Tech forums|Torrent repositories|1
+The PC freezes after installing a network driver. The best troubleshooting step is:|Boot into Safe Mode and uninstall the driver|Reformat the system|Disable antivirus|Change IP address|0
+Which is not a safe indicator of a legitimate driver file?|Digital signature|Downloaded from official site|Posted on social media page|Matched hardware ID|2
+After OS installation, the technician prioritizes installing productivity software first. Why?|To test CPU capability|To enable students to perform immediate work tasks|To avoid activation errors|To reduce RAM usage|1
+Installing an antivirus right after OS setup is important because:|It increases internet speed|It prevents malware infection during driver updates|It reduces storage usage|It unlocks premium features|1
+After installing MS Office, it repeatedly asks for activation even when licensed. What’s the best fix?|Disable Windows Firewall|Run activation troubleshooter or sign in with MS account|Reinstall Windows|Install offline mode|1
+Which application is most critical for accessing online-based learning platforms immediately after setup?|Multimedia player|Web browser|PDF reader|Office suite|1
+After installing a free PDF reader, pop-up ads appear frequently. What should the technician do?|Disable JavaScript|Uninstall and replace with a trusted open-source alternative|Update antivirus definitions|Disable Windows Defender|1
+A student wants to install a cracked version of Office to save money. What’s the ethical and technical advice?|Use it if antivirus detects no issue|Avoid it — it violates copyright and may carry malware|Disable internet before installing|Compress it in ZIP|1
+A multimedia editor notices audio lag while editing videos. What’s the most probable cause?|Outdated audio codec|Faulty PSU|Missing printer driver|BIOS misconfiguration|0
+An antivirus detects a browser extension as a PUA (Potentially Unwanted Application). What should the user do?|Add to whitelist|Ignore warning|Remove the extension|Disable antivirus|2
+A PC slows down after installing multiple multimedia tools. The most likely cause is:|Software conflict and high startup load|Corrupt BIOS|Weak network signal|Malware infection|0
+When setting up multiple systems in a lab, what’s the most efficient method of installing all basic applications?|Install manually one by one|Create a preconfigured system image|Use portable versions from flash drive|Use Windows Store apps|1
+A client’s PC reboots endlessly after driver updates. Safe Mode also fails. What’s your next logical action?|Reinstall Windows without deleting files|Replace the RAM|Update BIOS|Boot from USB and restore from System Restore point|3
+During installation, “Windows cannot find required files” appears. The most probable reason is:|Faulty RAM|Corrupt or incomplete bootable USB|Incompatible graphics driver|Outdated BIOS|1
+A user installed two antivirus programs, and now the PC lags severely. Why?|They consume the same update service|They conflict in real-time protection|One removed the boot files|BIOS is damaged|1
+A student installs a browser that keeps changing the default search engine. What’s the best solution?|Reset browser settings or reinstall clean version|Disable antivirus temporarily|Uninstall PDF reader|Block websites in hosts file|0
+After assembling and installing Windows, the PC randomly shuts down. The temperature in BIOS shows 95°C. What’s the issue?|Faulty PSU|Poor CPU cooling or missing thermal paste|Wrong boot order|Loose RAM|1
+A technician installs Windows using GPT partition style but enables Legacy mode in BIOS. The system:|Boots normally|Fails to boot|Installs slower|Shows missing driver error|1
+During driver installation, a blue screen appears with “IRQL_NOT_LESS_OR_EQUAL.” The best first response is:|Roll back the last driver installed|Repartition the drive|Replace CMOS|Increase virtual memory|0
+After Windows installation, the PC boots but shows “No Boot Device Found.” The technician should:|Reinstall OS|Change boot order in BIOS to SSD/HDD|Format the disk|Disable Secure Boot|1
+A newly installed web browser refuses to open secure (https) sites. What should be checked?|BIOS time and date|Sound driver|RAM module|USB port|0
+A client complains that PDF files won’t open after OS reinstallation. The most likely cause is:|PDF reader not yet installed|BIOS not updated|Windows Update pending|Missing graphics driver|0`;
+
+        const questionBank = rawQuestionData.trim().split('\n').map(line => {
+            const p = line.split('|');
+            return { questionText: p[0], options: [p[1], p[2], p[3], p[4]], correctOptionIndex: parseInt(p[5], 10) };
+        });
+
+        // Helper to format name as "Last, First M."
+        function getFormattedName(profile) {
+            let initial = "";
+            if (profile.middleName && profile.middleName.trim() !== "") {
+                initial = " " + profile.middleName.trim().charAt(0).toUpperCase() + ".";
+            }
+            let first = profile.firstName ? profile.firstName.trim() : "";
+            let last = profile.lastName ? profile.lastName.trim() : "";
+            return `${last}, ${first}${initial}`.toUpperCase();
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // --- Persistent State & Autosave ---
+        function saveState() {
+            if(examState.submitted) return;
+
+            examState.profile.lastName = document.getElementById('lastName').value;
+            examState.profile.firstName = document.getElementById('firstName').value;
+            examState.profile.middleName = document.getElementById('middleName').value;
+            examState.profile.trainerName = document.getElementById('trainerName').value;
+            
+            const sexEl = document.querySelector('input[name="sex"]:checked');
+            examState.profile.sex = sexEl ? sexEl.value : "";
+            
+            const secEl = document.querySelector('input[name="section"]:checked');
+            examState.profile.section = secEl ? secEl.value : "";
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(examState));
+        }
+
+        function restoreUIFromState() {
+            document.getElementById('lastName').value = examState.profile.lastName || '';
+            document.getElementById('firstName').value = examState.profile.firstName || '';
+            document.getElementById('middleName').value = examState.profile.middleName || '';
+            document.getElementById('trainerName').value = examState.profile.trainerName || '';
+
+            if (examState.profile.sex) {
+                const sexEl = document.querySelector(`input[name="sex"][value="${examState.profile.sex}"]`);
+                if(sexEl) sexEl.checked = true;
+            }
+            if (examState.profile.section) {
+                const secEl = document.querySelector(`input[name="section"][value="${examState.profile.section}"]`);
+                if(secEl) secEl.checked = true;
+            }
+
+            const qc = document.getElementById('questions-container');
+            qc.innerHTML = '';
+            
+            examState.quiz.forEach((q, index) => {
+                const questionNumber = index + 2; 
+                let optionsHTML = '';
+                q.options.forEach((opt) => {
+                    const isChecked = (q.userAnswer === opt) ? 'checked' : '';
+                    optionsHTML += `
+                        <label class="option-label">
+                            <input type="radio" name="q${index}" value="${opt.replace(/"/g, '&quot;')}" ${isChecked}>
+                            ${opt}
+                        </label>
+                    `;
+                });
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="question-text">${questionNumber}. ${q.question} <span style="font-weight:normal; color:#666;">(1 Point)</span></div>
+                    <div class="options-group">${optionsHTML}</div>
+                `;
+                qc.appendChild(card);
+            });
+        }
+
+        // --- Timer Logic ---
+        function startTimer() {
+            document.getElementById('timer-container').classList.remove('hidden');
+            
+            timerInterval = setInterval(() => {
+                const now = Date.now();
+                const timeLeft = Math.max(0, examState.endTime - now);
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timer-container').innerText = "00:00";
+                    alert("Time is up! Your exam is being submitted automatically.");
+                    submitExam(true);
+                } else {
+                    const minutes = Math.floor(timeLeft / 60000);
+                    const seconds = Math.floor((timeLeft % 60000) / 1000);
+                    
+                    const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    const timerEl = document.getElementById('timer-container');
+                    timerEl.innerText = display;
+
+                    if (timeLeft < 60000) {
+                        timerEl.classList.add('timer-warning');
+                    }
+                }
+            }, 1000);
+        }
+
+        // --- Initialization ---
+        function initExam(forceNew = false) {
+            clearInterval(timerInterval);
+            
+            if (!forceNew) {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY);
+                    if (saved) {
+                        examState = JSON.parse(saved);
+                    }
+                } catch (e) {
+                    console.error("Failed to parse saved state.");
+                }
+            }
+
+            if (examState.submitted || (examState.endTime && Date.now() >= examState.endTime && examState.quiz.length > 0)) {
+                submitExam(true); 
+                return;
+            }
+
+            if (examState.quiz.length === 0 || forceNew) {
+                // Exactly 50 questions
+                let selectedQuestions = shuffle([...questionBank]).slice(0, 50);
+                examState.quiz = selectedQuestions.map(item => ({
+                    question: item.questionText,
+                    options: shuffle([...item.options]),
+                    correctAnswer: item.options[item.correctOptionIndex],
+                    userAnswer: null
+                }));
+                examState.endTime = Date.now() + EXAM_DURATION_MS;
+                examState.submitted = false;
+                examState.accomplishedTime = null;
+                saveState();
+            }
+
+            document.getElementById('profile-container').addEventListener('input', saveState);
+            document.getElementById('profile-container').addEventListener('change', saveState);
+            document.getElementById('trainerName').addEventListener('input', saveState);
+            
+            document.getElementById('questions-container').addEventListener('change', (e) => {
+                if (e.target.type === 'radio' && e.target.name.startsWith('q')) {
+                    const idx = parseInt(e.target.name.substring(1));
+                    examState.quiz[idx].userAnswer = e.target.value;
+                    saveState();
+                }
+            });
+
+            restoreUIFromState();
+            document.getElementById('timer-container').classList.remove('timer-warning');
+            startTimer();
+        }
+
+        // --- Submission & Review ---
+        function submitExam(isAutoSubmit = false) {
+            saveState();
+
+            if (!isAutoSubmit) {
+                if(!examState.profile.lastName || !examState.profile.firstName || !examState.profile.sex || !examState.profile.section) {
+                    alert("Please complete the Examinee Profile section before submitting.");
+                    return;
+                }
+
+                let missedQuestionsWarning = examState.quiz.some(q => q.userAnswer === null);
+                if(missedQuestionsWarning) {
+                    const confirmSubmit = confirm("You have unanswered questions. Are you sure you want to submit?");
+                    if(!confirmSubmit) return;
+                }
+            }
+
+            clearInterval(timerInterval);
+            document.getElementById('timer-container').classList.add('hidden');
+
+            // Grade Exam
+            examState.score = 0;
+            
+            // Question 1 Scoring (5 Points)
+            const trainerInput = (examState.profile.trainerName || "").trim().toUpperCase();
+            if (trainerInput === CORRECT_TRAINER_NAME) {
+                examState.score += 5;
+            }
+
+            // Random Questions Scoring (1 Point each)
+            examState.quiz.forEach(q => {
+                if(q.userAnswer === q.correctAnswer) {
+                    examState.score += 1;
+                }
+            });
+
+            // Set Timestamp
+            if (!examState.accomplishedTime) {
+                examState.accomplishedTime = Date.now();
+            }
+
+            examState.submitted = true;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(examState));
+            generateReviewPage();
+        }
+
+        function generateReviewPage() {
+            document.getElementById('quiz-page').classList.add('hidden');
+            document.getElementById('review-page').classList.remove('hidden');
+            
+            document.getElementById('score-display').innerText = `Total Score: ${examState.score} / ${MAX_SCORE}`;
+            
+            // Generate Summary Page Card
+            const summaryContainer = document.getElementById('summary-container');
+            const fullName = getFormattedName(examState.profile);
+            const sex = examState.profile.sex || "N/A";
+            const section = examState.profile.section || "N/A";
+            
+            // Format Timestamp
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const timestampStr = new Date(examState.accomplishedTime).toLocaleString(undefined, options);
+
+            const summaryHTML = `
+                <div class="card summary-wrapper">
+                    <div class="summary-info">
+                        <div class="card-title" style="margin-bottom: 5px;">Result Summary</div>
+                        <p><strong>Examinee:</strong> ${fullName}</p>
+                        <p><strong>Sex:</strong> ${sex}</p>
+                        <p><strong>Section:</strong> ${section}</p>
+                        <p><strong>Score:</strong> <span style="color:var(--correct-text); font-weight:bold; font-size: 1.2rem;">${examState.score} / ${MAX_SCORE} Points</span></p>
+                        <p><strong>Date Completed:</strong> ${timestampStr}</p>
+                    </div>
+                    <div class="summary-qr" id="qrcode"></div>
+                </div>
+            `;
+            summaryContainer.innerHTML = summaryHTML;
+
+            // Generate QR Code containing info
+            const qrPayload = `Name: ${fullName}\nSex: ${sex}\nSection: ${section}\nScore: ${examState.score}/${MAX_SCORE}\nDate: ${timestampStr}`;
+            new QRCode(document.getElementById("qrcode"), {
+                text: qrPayload,
+                width: 128,
+                height: 128,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.L
+            });
+
+            // Generate Details Review
+            const reviewContainer = document.getElementById('review-container');
+            let reviewHTML = '';
+
+            const trainerInput = (examState.profile.trainerName || "").trim().toUpperCase();
+            const isTrainerCorrect = (trainerInput === CORRECT_TRAINER_NAME);
+            
+            reviewHTML += `
+                <div class="card">
+                    <div class="question-text">1. What is the name of your CSS Trainer/Teacher? <span style="font-weight:normal; color:#666;">(5 Points)</span></div>
+                    <div class="review-opt ${isTrainerCorrect ? 'opt-correct' : 'opt-wrong'}">
+                        Your Answer: ${trainerInput || '[No Answer Provided]'} ${isTrainerCorrect ? '<span class="badge">Correct (+5) ✓</span>' : '<span class="badge">Mistake (0) ✗</span>'}
+                    </div>
+                    ${!isTrainerCorrect ? `<div class="review-opt opt-missed">Correct Answer: ${CORRECT_TRAINER_NAME}</div>` : ''}
+                </div>
+            `;
+
+            examState.quiz.forEach((q, index) => {
+                const questionNumber = index + 2;
+                let optionsListHTML = '';
+
+                q.options.forEach(opt => {
+                    let cssClass = 'review-opt';
+                    let badge = '';
+
+                    if (opt === q.correctAnswer && opt === q.userAnswer) {
+                        cssClass += ' opt-correct';
+                        badge = '<span class="badge">Your Correct Answer (+1) ✓</span>';
+                    } else if (opt === q.userAnswer && opt !== q.correctAnswer) {
+                        cssClass += ' opt-wrong';
+                        badge = '<span class="badge">Your Mistake (0) ✗</span>';
+                    } else if (opt === q.correctAnswer && opt !== q.userAnswer) {
+                        cssClass += ' opt-missed';
+                        badge = '<span class="badge">Correct Answer ✓</span>';
+                    }
+
+                    optionsListHTML += `<div class="${cssClass}">${opt} ${badge}</div>`;
+                });
+
+                reviewHTML += `
+                    <div class="card">
+                        <div class="question-text">${questionNumber}. ${q.question} <span style="font-weight:normal; color:#666;">(1 Point)</span></div>
+                        ${optionsListHTML}
+                    </div>
+                `;
+            });
+
+            reviewContainer.innerHTML = reviewHTML;
+            window.scrollTo(0, 0);
+        }
+
+        function retakeExam() {
+            const currentProfile = { ...examState.profile };
+            examState = {
+                endTime: null,
+                submitted: false,
+                score: 0,
+                accomplishedTime: null,
+                profile: currentProfile,
+                quiz: []
+            };
+            
+            document.getElementById('review-page').classList.add('hidden');
+            document.getElementById('quiz-page').classList.remove('hidden');
+            
+            initExam(true);
+            window.scrollTo(0, 0);
+        }
+
+        // Start App
+        window.onload = () => initExam(false);
+
+    </script>
+</body>
+</html>
