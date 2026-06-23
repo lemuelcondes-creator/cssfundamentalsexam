@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COC 1 - Install and Configure Computer Systems</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #0f52ba;
+            --primary-dark: #0a3d8c;
+            --secondary: #eef2f9;
+            --text-dark: #1a1a1a;
+            --text-light: #555;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --correct: #10b981;
+            --incorrect: #ef4444;
+            --border: #d1d5db;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-dark); line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+        header { background-color: var(--primary); color: var(--white); padding: 30px 20px; text-align: center; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        header h1 { font-size: 24px; margin-bottom: 10px; }
+        header p { font-size: 14px; opacity: 0.9; }
+
+        .note { background-color: #fef3c7; color: #92400e; padding: 15px; border-left: 5px solid #f59e0b; font-weight: 600; margin-bottom: 20px; border-radius: 4px; text-align: center; }
+
+        .alert { padding: 20px; border-radius: 6px; margin-bottom: 20px; font-weight: bold; text-align: center; font-size: 18px; }
+        .alert-success { background-color: #d1fae5; color: #065f46; border: 1px solid #34d399; }
+        .alert-warning { background-color: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+
+        .card { background: var(--white); padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid var(--border); }
+        h2.section-title { color: var(--primary); border-bottom: 2px solid var(--secondary); padding-bottom: 10px; margin-bottom: 20px; font-size: 20px; }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--text-dark); }
+        input[type="text"], select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 16px; text-transform: uppercase; transition: border-color 0.3s; }
+        input[type="text"]:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15, 82, 186, 0.1); }
+
+        .radio-group { display: flex; gap: 15px; }
+        .radio-label { display: flex; align-items: center; font-weight: 400; cursor: pointer; }
+        .radio-label input { margin-right: 8px; }
+
+        .question-block { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed var(--border); }
+        .question-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .q-text { font-weight: 600; margin-bottom: 12px; font-size: 16px; }
+
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .option-item { background: var(--secondary); padding: 12px; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
+        .option-item:hover { background: #e2e8f0; }
+
+        .btn { display: inline-block; background: var(--primary); color: var(--white); padding: 15px 30px; font-size: 16px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; transition: background 0.3s; text-align: center; }
+        .btn:hover { background: var(--primary-dark); }
+        .btn-secondary { background: #64748b; }
+        .btn-secondary:hover { background: #475569; }
+        .btn-success { background: var(--correct); }
+        .btn-success:hover { background: #059669; }
+        
+        .nav-buttons { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
+        .nav-buttons .btn { flex: 1; }
+
+        /* Sticky Bars */
+        #timer-bar { position: sticky; top: 0; background: var(--text-dark); color: var(--white); text-align: center; padding: 10px; font-size: 20px; font-weight: bold; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); display: none; }
+        .warning-time { background: var(--incorrect) !important; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.8; } }
+
+        #review-header { position: sticky; top: 0; background: var(--primary); color: var(--white); text-align: center; padding: 15px; font-size: 22px; font-weight: bold; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); display: none; }
+
+        .badge { display: inline-block; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-top: 10px; color: white; }
+        .badge-correct { background-color: var(--correct); }
+        .badge-incorrect { background-color: var(--incorrect); }
+        .reveal-answer { color: var(--correct); font-weight: 700; }
+
+        .hidden { display: none !important; }
+
+        /* Summary Layout */
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        @media (max-width: 768px) { .summary-grid { grid-template-columns: 1fr; } }
+        
+        #qrcode { display: flex; justify-content: center; padding: 20px; background: white; border-radius: 8px; border: 1px solid var(--border); }
+        .lo-stats { margin-top: 20px; }
+        .lo-item { margin-bottom: 15px; }
+        .lo-bar-bg { width: 100%; background: var(--secondary); border-radius: 4px; height: 16px; overflow: hidden; margin-top: 5px;}
+        .lo-bar-fill { height: 100%; background: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div id="timer-bar">Time Remaining: <span id="time-display">30:00</span></div>
+    <div id="review-header">Final Score: <span id="final-score">0</span> / 55</div>
+
+    <div class="container">
+        
+        <div id="view-intro">
+            <header>
+                <h1>COC 1: Install and Configure Computer Systems</h1>
+                <p>Comprehensive Examination (55 Points)</p>
+            </header>
+            <div class="note">NOTE: ALL ANSWERS MUST BE SUBMITTED IN CAPITAL LETTERS.</div>
+            <div class="card">
+                <h2>Examinee Details</h2>
+                <p style="margin-bottom: 15px; font-size: 14px; color: var(--text-light);">Please fill out your details before starting. The exam has a strict 30-minute time limit.</p>
+                
+                <div class="form-group"><label>LAST NAME</label><input type="text" id="lastName" placeholder="Enter Last Name" required></div>
+                <div class="form-group"><label>FIRST NAME</label><input type="text" id="firstName" placeholder="Enter First Name" required></div>
+                <div class="form-group"><label>MIDDLE NAME</label><input type="text" id="middleName" placeholder="Enter Middle Name"></div>
+                
+                <div class="form-group">
+                    <label>SEX</label>
+                    <div class="radio-group">
+                        <label class="radio-label"><input type="radio" name="sex" value="MALE" required> MALE</label>
+                        <label class="radio-label"><input type="radio" name="sex" value="FEMALE"> FEMALE</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>SECTION</label>
+                    <select id="section" required>
+                        <option value="" disabled selected>Select Section</option>
+                        <option value="ICT-A">ICT-A</option>
+                        <option value="ICT-B">ICT-B</option>
+                        <option value="ICT-C">ICT-C</option>
+                    </select>
+                </div>
+                <button class="btn" style="width: 100%" onclick="startExam()">Start Examination</button>
+            </div>
+        </div>
+
+        <div id="view-exam" class="hidden">
+            <div class="note">NOTE: ALL ANSWERS MUST BE SUBMITTED IN CAPITAL LETTERS.</div>
+            <div id="exam-page-content"></div>
+            
+            <div class="nav-buttons card">
+                <button id="btn-prev" class="btn btn-secondary" onclick="navigateExam(-1)">&#8592; Previous Part</button>
+                <button id="btn-next" class="btn" onclick="navigateExam(1)">Next Part &#8594;</button>
+                <button id="btn-submit" class="btn btn-success hidden" onclick="submitExam(false)">Submit Final Exam</button>
+            </div>
+        </div>
+
+        <div id="view-review" class="hidden">
+            <header style="margin-top: 20px;">
+                <h1>Review Your Answers</h1>
+                <p>Verify your performance below. Correct answers are revealed.</p>
+            </header>
+            <div id="review-container"></div>
+            <div class="card">
+                <button class="btn" style="width: 100%" onclick="showSummary()">View Full Results & Analysis</button>
+            </div>
+        </div>
+
+        <div id="view-summary" class="hidden">
+            <header style="margin-top: 20px;">
+                <h1>Examination Summary</h1>
+                <p>Performance Analytics & Completion Record</p>
+            </header>
+            
+            <div id="pass-fail-msg"></div>
+
+            <div class="card summary-grid">
+                <div>
+                    <h2 class="section-title">Examinee Record</h2>
+                    <p><strong>Name:</strong> <span id="sum-name"></span></p>
+                    <p><strong>Sex:</strong> <span id="sum-sex"></span></p>
+                    <p><strong>Section:</strong> <span id="sum-section"></span></p>
+                    <p><strong>Final Score:</strong> <span id="sum-score"></span> / 55</p>
+                    <p><strong>Status:</strong> <span id="sum-status" style="font-weight:bold;"></span></p>
+                    <p><strong>Timestamp:</strong> <span id="sum-time"></span></p>
+                </div>
+                <div>
+                    <h2 class="section-title">Verification QR Code</h2>
+                    <div id="qrcode"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="section-title">Learning Outcome Evaluation</h2>
+                <div id="lo-text-stats" class="lo-stats"></div>
+            </div>
+
+            <div class="card">
+                <button class="btn btn-secondary" style="width: 100%" onclick="retakeExam()">Retake Exam (Clears Data)</button>
+            </div>
+        </div>
+
+    </div>
+
+<script>
+// --- CONFIGURATION & TEST LIMITS ---
+const CONFIG = {
+    LIMIT_MC: 30, // Number of questions to randomly pick for Multiple Choice
+    LIMIT_TF: 10, // Number of questions to randomly pick for True/False
+    LIMIT_ID: 10, // Number of questions to randomly pick for Identification
+    PASSING_SCORE: 44, // Minimum score to pass
+    DURATION_MS: 30 * 60 * 1000 // 30 Minutes
+};
+
+// LO Categories
+const LO = {
+    L1: "Assemble Computer Hardware", L2: "Prepare bootable installer", L3: "Install operating system",
+    L4: "Install device drivers", L5: "Install applications software", L6: "Conduct testing and documentation"
+};
+
+// ====================================================================================
+// TEST BANK: YOU CAN ADD OR REMOVE QUESTIONS HERE FREELY. 
+// The system will randomly pick exactly 30 MC, 10 TF, and 10 ID questions.
+// ====================================================================================
+
+const questionsMC = [
+    { id: "mc1", lo: LO.L1, q: "What does the acronym \"CPU\" stand for?", options: ["Computer Processing Unit", "Central Processing Unit", "Core Processing Utility", "Central Performance Unit"], ans: "Central Processing Unit" },
+    { id: "mc2", lo: LO.L1, q: "In the context of occupational safety, what does \"ESD\" stand for?", options: ["Electronic System Diagnostic", "Electrical Safety Device", "Electrostatic Discharge", "Emergency System Disconnect"], ans: "Electrostatic Discharge" },
+    { id: "mc3", lo: LO.L1, q: "Which of the following is considered a hand tool used in computer disassembly?", options: ["Multimeter", "Compressed air", "Phillips screwdriver", "Loopback plug"], ans: "Phillips screwdriver" },
+    { id: "mc4", lo: LO.L2, q: "What is the typical minimum required capacity for a USB flash drive to create a modern OS bootable installer?", options: ["2GB", "4GB", "8GB", "32GB"], ans: "8GB" },
+    { id: "mc5", lo: LO.L1, q: "What does the \"S\" in the 5S Methodology stand for that involves keeping the workplace clean and free of debris?", options: ["Sort", "Sanitize / Shine", "Systematize", "Standardize"], ans: "Sanitize / Shine" },
+    { id: "mc6", lo: LO.L1, q: "What is the primary function of the computer's motherboard?", options: ["To process all mathematical calculations for the system.", "To store the operating system permanently.", "To act as the main circuit board connecting and allowing communication between all components.", "To convert alternating current (AC) to direct current (DC)."], ans: "To act as the main circuit board connecting and allowing communication between all components." },
+    { id: "mc7", lo: LO.L4, q: "How does a device driver function within a computer system?", options: ["It protects the computer from malware and viruses.", "It acts as a translator between the operating system and the physical hardware component.", "It provides electrical power to the peripheral devices.", "It manages the cooling fans inside the system chassis."], ans: "It acts as a translator between the operating system and the physical hardware component." },
+    { id: "mc8", lo: LO.L1, q: "What is the main difference between a Hard Disk Drive (HDD) and a Solid-State Drive (SSD)?", options: ["HDDs use volatile memory, while SSDs use non-volatile memory.", "HDDs use spinning magnetic platters, while SSDs use flash memory chips with no moving parts.", "HDDs connect via SATA, while all SSDs connect via USB.", "HDDs are faster but hold less data than SSDs."], ans: "HDDs use spinning magnetic platters, while SSDs use flash memory chips with no moving parts." },
+    { id: "mc9", lo: LO.L3, q: "Why is it critical to set the correct date and time in the BIOS/UEFI settings?", options: ["To ensure the computer boots faster.", "To allow the CPU to process tasks synchronously.", "To ensure OS security updates and internet cryptographic certificates validate correctly.", "To prevent the power supply from overheating."], ans: "To ensure OS security updates and internet cryptographic certificates validate correctly." },
+    { id: "mc10", lo: LO.L3, q: "What is the primary purpose of dividing a single physical storage drive into two distinct partitions (e.g., Drive C: and Drive D:)?", options: ["To make the computer run twice as fast.", "To isolate the Operating System on one partition, keeping user data safe on the other if the OS needs reformatting.", "To allow the installation of two different graphics cards.", "To bypass the BIOS and boot directly into Windows."], ans: "To isolate the Operating System on one partition, keeping user data safe on the other if the OS needs reformatting." },
+    { id: "mc11", lo: LO.L3, q: "Which of the following best describes the difference between Legacy BIOS and UEFI?", options: ["BIOS supports larger hard drives than UEFI.", "UEFI is a modern firmware interface that supports a graphical UI and mouse input, whereas Legacy BIOS is a text-based interface.", "BIOS is used only for laptops, while UEFI is for desktop computers.", "UEFI is an operating system, while BIOS is hardware."], ans: "UEFI is a modern firmware interface that supports a graphical UI and mouse input, whereas Legacy BIOS is a text-based interface." },
+    { id: "mc12", lo: LO.L1, q: "What role does the Power Supply Unit (PSU) play in a computer system?", options: ["It stores backup power in case of a blackout.", "It converts incoming AC power from the wall outlet into the DC power needed by internal components.", "It cools down the internal components by regulating voltage.", "It acts as the primary storage for the BIOS firmware."], ans: "It converts incoming AC power from the wall outlet into the DC power needed by internal components." },
+    { id: "mc13", lo: LO.L1, q: "Why must thermal paste be applied between the CPU and its cooler?", options: ["To glue the cooler permanently to the CPU.", "To electrically insulate the CPU from the metal cooler.", "To fill microscopic air gaps between the surfaces, ensuring optimal heat transfer away from the CPU.", "To prevent dust from accumulating inside the CPU socket."], ans: "To fill microscopic air gaps between the surfaces, ensuring optimal heat transfer away from the CPU." },
+    { id: "mc14", lo: LO.L1, q: "What does the term \"form factor\" refer to when discussing motherboards (e.g., ATX, Micro-ATX)?", options: ["The speed of the processor socket.", "The physical dimensions, layout, and mounting hole configuration of the board.", "The type of RAM the motherboard can accept.", "The wattage required to power the motherboard."], ans: "The physical dimensions, layout, and mounting hole configuration of the board." },
+    { id: "mc15", lo: LO.L4, q: "How does a network adapter driver differ from a display driver in terms of user experience?", options: ["Network drivers handle audio output, while display drivers handle internet.", "Network drivers enable the OS to connect to the internet, while display drivers enable the OS to render correct screen resolutions and graphics.", "Network drivers are only needed for Windows, while display drivers are only for Linux.", "Network drivers do not require updates, whereas display drivers must be updated daily."], ans: "Network drivers enable the OS to connect to the internet, while display drivers enable the OS to render correct screen resolutions and graphics." },
+    { id: "mc16", lo: LO.L1, q: "You are about to open a client's computer case to upgrade the RAM. What is the very first occupational safety step you should take?", options: ["Put on safety goggles.", "Unplug the system from the wall outlet and press the power button to discharge flea power.", "Remove the hard drive to protect data.", "Apply thermal paste to the CPU."], ans: "Unplug the system from the wall outlet and press the power button to discharge flea power." },
+    { id: "mc17", lo: LO.L2, q: "You are using Rufus to create a bootable Windows 11 USB for a brand-new, modern computer. Which partition scheme should you select?", options: ["MBR", "FAT32", "GPT", "Legacy"], ans: "GPT" },
+    { id: "mc18", lo: LO.L4, q: "After assembling a PC and installing Windows, you notice yellow exclamation marks next to several items in the Device Manager. What specific action should you take?", options: ["Replace the motherboard immediately as it is defective.", "Locate and install the missing device drivers for those specific components.", "Format the hard drive and reinstall the operating system.", "Increase the size of the Drive C: partition."], ans: "Locate and install the missing device drivers for those specific components." },
+    { id: "mc19", lo: LO.L3, q: "A client wants to ensure their personal files are safe if Windows crashes and requires a fresh installation. How should you configure their 1TB storage drive during OS installation?", options: ["Create a single 1TB partition for everything.", "Create a 250GB partition for the OS (Drive C:) and a 750GB partition for personal files (Drive D:).", "Format the drive as FAT32 instead of NTFS.", "Install Windows onto a USB flash drive instead of the internal drive."], ans: "Create a 250GB partition for the OS (Drive C:) and a 750GB partition for personal files (Drive D:)." },
+    { id: "mc20", lo: LO.L1, q: "You are diagnosing a computer that will not turn on. You decide to use a multimeter. What are you primarily trying to test with this tool?", options: ["The health of the hard drive sectors.", "The voltage output of the Power Supply Unit (PSU) cables.", "The speed of the network connection.", "The rotation speed of the CPU fan."], ans: "The voltage output of the Power Supply Unit (PSU) cables." },
+    { id: "mc21", lo: LO.L3, q: "You have successfully created a bootable USB installer. However, when you turn on the PC, it keeps trying to load the old, corrupted Windows from the hard drive. What must you change?", options: ["The time zone settings in Windows.", "The BIOS/UEFI boot order priority, moving the USB drive to the top.", "The CPU frequency settings in the BIOS.", "The port where the monitor is plugged in."], ans: "The BIOS/UEFI boot order priority, moving the USB drive to the top." },
+    { id: "mc22", lo: LO.L5, q: "While installing application software, you want to avoid installing unwanted bundled toolbars (bloatware). What is the best practice?", options: ["Disconnect the internet before installing.", "Always click \"Next\" as fast as possible to bypass ads.", "Choose the \"Custom\" or \"Advanced\" installation option to manually uncheck unwanted bundled software.", "Install the software in Safe Mode."], ans: "Choose the \"Custom\" or \"Advanced\" installation option to manually uncheck unwanted bundled software." },
+    { id: "mc23", lo: LO.L1, q: "You have purchased an ATX form-factor motherboard. Which chassis (case) specification must you verify before starting assembly?", options: ["That the case supports ATX form-factor motherboards.", "That the case comes with a 1000W power supply.", "That the case is painted black to prevent static.", "That the case has a minimum of four USB 3.0 ports."], ans: "That the case supports ATX form-factor motherboards." },
+    { id: "mc24", lo: LO.L1, q: "When routing cables inside a PC case (cable management), what is the best practice to optimize system thermal performance?", options: ["Tie all cables directly over the CPU cooler.", "Route and tie cables securely behind the motherboard tray to keep the main airflow paths unobstructed.", "Leave all cables loose so they can move freely if the case is bumped.", "Wrap cables in aluminum foil to prevent heat transfer."], ans: "Route and tie cables securely behind the motherboard tray to keep the main airflow paths unobstructed." },
+    { id: "mc25", lo: LO.L1, q: "A technician is about to replace a stick of RAM. To prevent ESD from destroying the new module, what should they do?", options: ["Wear rubber gloves and stand on a carpet.", "Wash their hands with soap and water immediately before touching the RAM.", "Wear an anti-static wrist strap connected to a grounded, unpainted metal part of the chassis.", "Magnetize their screwdriver before opening the RAM packaging."], ans: "Wear an anti-static wrist strap connected to a grounded, unpainted metal part of the chassis." },
+    { id: "mc26", lo: LO.L6, q: "A newly assembled computer powers on, fans spin, but there is no display. The motherboard emits a continuous, repeating long beep code. Which component is most likely faulty or incorrectly seated?", options: ["The SSD", "The Operating System", "The RAM", "The CMOS battery"], ans: "The RAM" },
+    { id: "mc27", lo: LO.L3, q: "Which limitation of MBR makes GPT the necessary standard for modern, large-capacity storage drives?", options: ["MBR cannot be used for Windows installations.", "MBR is limited to addressing a maximum of 2TB of storage space, while GPT supports massively larger drives.", "MBR only supports USB 2.0 speeds.", "MBR is prone to hardware viruses, whereas GPT is immune."], ans: "MBR is limited to addressing a maximum of 2TB of storage space, while GPT supports massively larger drives." },
+    { id: "mc28", lo: LO.L4, q: "A computer works offline but cannot connect to the internet. Ethernet cable is verified. Device Manager shows a yellow warning triangle under \"Network Adapters\". Next step?", options: ["Replace the Power Supply Unit.", "Use another computer to download the correct LAN driver from the motherboard manufacturer's website and transfer it via USB.", "Reformat the entire hard drive.", "Change the boot order in the BIOS."], ans: "Use another computer to download the correct LAN driver from the motherboard manufacturer's website and transfer it via USB." },
+    { id: "mc29", lo: LO.L6, q: "A client's PC randomly shuts down entirely when playing heavy 3D video games, but stays on indefinitely when browsing the web. Which two components should be tested first?", options: ["The CPU and the Power Supply Unit (PSU)", "The Hard Drive and the Audio Card", "The Network Adapter and the RAM", "The CMOS Battery and the Case Fans"], ans: "The CPU and the Power Supply Unit (PSU)" },
+    { id: "mc30", lo: LO.L1, q: "Why would a seasoned technician choose to utilize the \"breadboarding\" (out-of-case assembly) technique?", options: ["To make the assembly process take longer.", "To verify that the core components (CPU, Motherboard, RAM) can successfully POST without interference from case standoffs or wiring.", "To allow the thermal paste to dry out.", "To format the hard drive without needing a monitor."], ans: "To verify that the core components (CPU, Motherboard, RAM) can successfully POST without interference from case standoffs or wiring." }
+];
+
+const questionsTF = [
+    { id: "tf1", lo: LO.L1, q: "Random Access Memory (RAM) is non-volatile, meaning it retains its data even when the computer is powered off.", options: ["TRUE", "FALSE"], ans: "FALSE" },
+    { id: "tf2", lo: LO.L1, q: "An anti-static wrist strap is classified as a diagnostic tool.", options: ["TRUE", "FALSE"], ans: "FALSE" },
+    { id: "tf3", lo: LO.L1, q: "The 5S methodology originates from workplace organization practices and includes sorting and standardizing the work area.", options: ["TRUE", "FALSE"], ans: "TRUE" },
+    { id: "tf4", lo: LO.L4, q: "A display driver must be installed to ensure the monitor outputs at its correct, native resolution and utilizes hardware acceleration.", options: ["TRUE", "FALSE"], ans: "TRUE" },
+    { id: "tf5", lo: LO.L3, q: "Legacy BIOS features a modern, graphical user interface that allows the use of a computer mouse for navigation.", options: ["TRUE", "FALSE"], ans: "FALSE" },
+    { id: "tf6", lo: LO.L6, q: "The primary purpose of the Power-On Self-Test (POST) is to check if the basic hardware components are functioning before loading the operating system.", options: ["TRUE", "FALSE"], ans: "TRUE" },
+    { id: "tf7", lo: LO.L2, q: "When preparing a bootable USB installer for a modern motherboard running UEFI firmware, the partition scheme in the creation tool should be set to GPT.", options: ["TRUE", "FALSE"], ans: "TRUE" },
+    { id: "tf8", lo: LO.L1, q: "When performing cable management, it is acceptable to route thick power cables directly across the front of the CPU cooler fan.", options: ["TRUE", "FALSE"], ans: "FALSE" },
+    { id: "tf9", lo: LO.L4, q: "It is highly recommended to install the network adapter driver first after an OS installation, so the computer can connect to the internet and fetch remaining drivers.", options: ["TRUE", "FALSE"], ans: "TRUE" },
+    { id: "tf10", lo: LO.L6, q: "If the system date and time reset back to a default factory year every time the computer is unplugged, the most logical cause is a corrupted Operating System.", options: ["TRUE", "FALSE"], ans: "FALSE" }
+];
+
+const questionsID = [
+    { id: "id1", lo: LO.L1, q: "What physical component serves as the computer's volatile working memory?", ans: ["RAM", "RANDOM ACCESS MEMORY"] },
+    { id: "id2", lo: LO.L6, q: "What does the acronym \"POST\" stand for in the context of system booting?", ans: ["POWER-ON SELF-TEST", "POWER ON SELF TEST"] },
+    { id: "id3", lo: LO.L3, q: "What modern firmware interface replaced Legacy BIOS and provides support for secure boot and drives larger than 2TB?", ans: ["UEFI", "UNIFIED EXTENSIBLE FIRMWARE INTERFACE"] },
+    { id: "id4", lo: LO.L3, q: "What term refers to the process of dividing a single physical hard drive into multiple distinct, logical sections?", ans: ["PARTITIONING", "DRIVE PARTITIONING"] },
+    { id: "id5", lo: LO.L1, q: "What handheld diagnostic tool is used to safely measure electrical values, such as the voltage output of a power supply?", ans: ["MULTIMETER", "DIGITAL MULTIMETER"] },
+    { id: "id6", lo: LO.L1, q: "What substance must be carefully applied between the CPU and the heatsink to ensure proper heat transfer?", ans: ["THERMAL PASTE", "THERMAL COMPOUND", "TIM"] },
+    { id: "id7", lo: LO.L1, q: "It is the first software that runs when a computer is powered on and is used to initialize hardware components before loading the operating system.", ans: ["BIOS", "UEFI"] },
+    { id: "id8", lo: LO.L1, q: "A storage device that uses flash memory technology and has no moving parts, making it faster than traditional hard disk drives.", ans: ["SSD", "SOLID STATE DRIVE", "SOLID-STATE DRIVE"] },
+    { id: "id9", lo: LO.L3, q: "The process of preparing a storage drive by creating file systems so it can store data and be used by an operating system.", ans: ["FORMATTING"] },
+    { id: "id10", lo: LO.L4, q: "A software program that allows the operating system to communicate properly with a hardware device.", ans: ["DEVICE DRIVER", "DRIVER"] }
+];
+
+// ====================================================================================
+
+// Application State
+let state = {
+    startTime: null,
+    isSubmitted: false,
+    currentPage: 1,
+    answers: {},
+    personal: { lastName: "", firstName: "", middleName: "", sex: "", section: "" },
+    layout: { mc: [], tf: [], id: [], options: {} }
+};
+
+let timerInterval;
+
+// --- UTILS ---
+function shuffle(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function cleanStr(str) {
+    return (str || "").replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+}
+
+function getDOMVal(id, isRadio = false, radioName = "") {
+    if (isRadio) {
+        const el = document.querySelector(`input[name="${radioName}"]:checked`);
+        return el ? el.value : "";
+    }
+    return document.getElementById(id) ? document.getElementById(id).value.trim().toUpperCase() : "";
+}
+
+// --- INIT & PERSISTENCE ---
+window.onload = () => {
+    const saved = localStorage.getItem('coc1_exam_state');
+    if (saved) {
+        state = JSON.parse(saved);
+        if (state.isSubmitted) showSummary();
+        else if (state.startTime) resumeExam();
+    }
+};
+
+function saveState() {
+    localStorage.setItem('coc1_exam_state', JSON.stringify(state));
+}
+
+// --- FLOW CONTROLLERS ---
+
+function startExam() {
+    const lName = getDOMVal("lastName");
+    const fName = getDOMVal("firstName");
+    const sex = getDOMVal("sex", true, "sex");
+    const section = getDOMVal("section");
+
+    if (!lName || !fName || !sex || !section) {
+        alert("Please complete all required examinee details before starting.");
+        return;
+    }
+
+    state.personal = { lastName: lName, firstName: fName, middleName: getDOMVal("middleName"), sex, section };
+    state.startTime = Date.now();
+    state.currentPage = 1;
+    
+    // Dynamic Shuffling & Limiting Strategy based on Config
+    state.layout.mc = shuffle(questionsMC.map(q => q.id)).slice(0, CONFIG.LIMIT_MC);
+    state.layout.tf = shuffle(questionsTF.map(q => q.id)).slice(0, CONFIG.LIMIT_TF);
+    state.layout.id = shuffle(questionsID.map(q => q.id)).slice(0, CONFIG.LIMIT_ID);
+    
+    // Shuffle MC options for selected questions
+    state.layout.mc.forEach(qid => {
+        const qObj = questionsMC.find(x => x.id === qid);
+        state.layout.options[qid] = shuffle(qObj.options);
+    });
+
+    saveState();
+    resumeExam();
+}
+
+function resumeExam() {
+    document.getElementById("view-intro").classList.add("hidden");
+    document.getElementById("view-exam").classList.remove("hidden");
+    document.getElementById("timer-bar").style.display = "block";
+    startTimer();
+    renderExamPage(state.currentPage || 1);
+}
+
+function renderExamPage(pageNum) {
+    state.currentPage = pageNum;
+    saveState();
+    let html = "";
+
+    // Page 1: Trainer & Test 1 (MC)
+    if (pageNum === 1) {
+        html += `<div class="card">
+            <h2 class="section-title">Instructor Verification</h2>
+            <div class="form-group question-block">
+                <div class="q-text">What is the FULL NAME of your CSS Trainer/Teacher? (5 Points)</div>
+                <input type="text" value="${state.answers['trainer'] || ''}" 
+                       oninput="this.value = this.value.toUpperCase(); saveAnswer('trainer', this.value)" 
+                       placeholder="ENTER FULL NAME">
+            </div>
+        </div>`;
+
+        html += `<div class="card"><h2 class="section-title">Test 1: Multiple-Choice (${CONFIG.LIMIT_MC} Points)</h2>`;
+        state.layout.mc.forEach((qid, index) => {
+            const q = questionsMC.find(x => x.id === qid);
+            const opts = state.layout.options[qid];
+            html += `<div class="question-block">
+                <div class="q-text">${index + 1}. ${q.q}</div>
+                <div class="options-grid">`;
+            opts.forEach(opt => {
+                const isChecked = state.answers[qid] === opt ? "checked" : "";
+                html += `<label class="radio-label option-item">
+                    <input type="radio" name="${qid}" value="${opt}" ${isChecked} onchange="saveAnswer('${qid}', this.value)"> ${opt}
+                </label>`;
+            });
+            html += `</div></div>`;
+        });
+        html += `</div>`;
+    } 
+    // Page 2: Test 2 (TF)
+    else if (pageNum === 2) {
+        html += `<div class="card"><h2 class="section-title">Test 2: True or False (${CONFIG.LIMIT_TF} Points)</h2>`;
+        state.layout.tf.forEach((qid, index) => {
+            const q = questionsTF.find(x => x.id === qid);
+            html += `<div class="question-block">
+                <div class="q-text">${index + 1}. ${q.q}</div>
+                <div class="radio-group">`;
+            q.options.forEach(opt => {
+                const isChecked = state.answers[qid] === opt ? "checked" : "";
+                html += `<label class="radio-label option-item"><input type="radio" name="${qid}" value="${opt}" ${isChecked} onchange="saveAnswer('${qid}', this.value)"> ${opt}</label>`;
+            });
+            html += `</div></div>`;
+        });
+        html += `</div>`;
+    } 
+    // Page 3: Test 3 (ID)
+    else if (pageNum === 3) {
+        html += `<div class="card"><h2 class="section-title">Test 3: Identification (${CONFIG.LIMIT_ID} Points)</h2>`;
+        state.layout.id.forEach((qid, index) => {
+            const q = questionsID.find(x => x.id === qid);
+            html += `<div class="question-block">
+                <div class="q-text">${index + 1}. ${q.q}</div>
+                <input type="text" value="${state.answers[qid] || ''}" oninput="this.value = this.value.toUpperCase(); saveAnswer('${qid}', this.value)">
+            </div>`;
+        });
+        html += `</div>`;
+    }
+
+    document.getElementById("exam-page-content").innerHTML = html;
+
+    // Toggle Nav Buttons
+    document.getElementById("btn-prev").classList.toggle("hidden", pageNum === 1);
+    document.getElementById("btn-next").classList.toggle("hidden", pageNum === 3);
+    document.getElementById("btn-submit").classList.toggle("hidden", pageNum !== 3);
+    
+    // Scroll to top
+    window.scrollTo(0, 0);
+}
+
+function navigateExam(direction) {
+    const newPage = state.currentPage + direction;
+    if(newPage >= 1 && newPage <= 3) {
+        renderExamPage(newPage);
+    }
+}
+
+function saveAnswer(id, val) {
+    state.answers[id] = val;
+    saveState();
+}
+
+// --- TIMER LOGIC ---
+function startTimer() {
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        const elapsed = Date.now() - state.startTime;
+        const remaining = CONFIG.DURATION_MS - elapsed;
+        
+        if (remaining <= 0) {
+            clearInterval(timerInterval);
+            submitExam(true);
+            return;
+        }
+
+        const mins = Math.floor(remaining / 60000);
+        const secs = Math.floor((remaining % 60000) / 1000);
+        const display = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        
+        const timerEl = document.getElementById("time-display");
+        timerEl.innerText = display;
+
+        if (remaining <= 300000) { document.getElementById("timer-bar").classList.add("warning-time"); }
+    }, 1000);
+}
+
+// --- SUBMISSION & EVALUATION ---
+function evaluateExam() {
+    let score = 0;
+    let loStats = {
+        [LO.L1]: { c: 0, t: 0 }, [LO.L2]: { c: 0, t: 0 }, [LO.L3]: { c: 0, t: 0 },
+        [LO.L4]: { c: 0, t: 0 }, [LO.L5]: { c: 0, t: 0 }, [LO.L6]: { c: 0, t: 0 }
+    };
+
+    let evaluation = {};
+
+    // Trainer Eval
+    const trainerAns = state.answers['trainer'] || "";
+    const isTrainerCorrect = trainerAns.replace(/\s+/g, ' ').trim().toUpperCase() === "LEMUEL C. CONDES";
+    if (isTrainerCorrect) score += 5;
+    evaluation['trainer'] = { isCorrect: isTrainerCorrect, userAns: trainerAns, correctAns: "LEMUEL C. CONDES" };
+
+    // Evaluator helper
+    const check = (bankArr, id) => {
+        const q = bankArr.find(x => x.id === id);
+        const uAns = state.answers[id] || "";
+        let isCorrect = false;
+        let correctAnsText = "";
+
+        if (Array.isArray(q.ans)) {
+            isCorrect = q.ans.some(a => cleanStr(uAns) === cleanStr(a));
+            correctAnsText = q.ans.join(" / ");
+        } else {
+            isCorrect = cleanStr(uAns) === cleanStr(q.ans);
+            correctAnsText = q.ans;
+        }
+
+        if (isCorrect) { score++; loStats[q.lo].c++; }
+        loStats[q.lo].t++;
+        evaluation[id] = { isCorrect, userAns: uAns, q: q.q, correctAns: correctAnsText };
+    };
+
+    // Only evaluate the selected questions
+    state.layout.mc.forEach(id => check(questionsMC, id));
+    state.layout.tf.forEach(id => check(questionsTF, id));
+    state.layout.id.forEach(id => check(questionsID, id));
+
+    return { score, loStats, evaluation };
+}
+
+function submitExam(isAuto = false) {
+    if (!isAuto) { if(!confirm("Are you sure you want to submit your exam?")) return; }
+    
+    clearInterval(timerInterval);
+    state.isSubmitted = true;
+    saveState();
+    buildReviewUI();
+}
+
+// --- REVIEW UI ---
+function buildReviewUI() {
+    document.getElementById("view-exam").classList.add("hidden");
+    document.getElementById("timer-bar").style.display = "none";
+    document.getElementById("view-review").classList.remove("hidden");
+    document.getElementById("review-header").style.display = "block";
+    window.scrollTo(0,0);
+
+    const { score, evaluation } = evaluateExam();
+    document.getElementById("final-score").innerText = score;
+
+    let html = `<div class="card"><h2 class="section-title">Instructor Verification</h2>
+        <div class="question-block">
+            <div class="q-text">What is the name of your CSS Trainer/Teacher?</div>
+            <p><strong>Your Answer:</strong> ${evaluation['trainer'].userAns || '<i>No Answer</i>'}</p>
+            <p><strong>Correct Answer:</strong> <span class="reveal-answer">${evaluation['trainer'].correctAns}</span></p>
+            <span class="badge ${evaluation['trainer'].isCorrect ? 'badge-correct' : 'badge-incorrect'}">
+                ${evaluation['trainer'].isCorrect ? 'Correct (+5)' : 'Incorrect (0)'}
+            </span>
+        </div></div>`;
+
+    const sections = [
+        { title: "Test 1: Multiple-Choice", layout: state.layout.mc },
+        { title: "Test 2: True or False", layout: state.layout.tf },
+        { title: "Test 3: Identification", layout: state.layout.id }
+    ];
+
+    sections.forEach(sec => {
+        html += `<div class="card"><h2 class="section-title">${sec.title}</h2>`;
+        sec.layout.forEach((id, idx) => {
+            const ev = evaluation[id];
+            html += `<div class="question-block">
+                <div class="q-text">${idx + 1}. ${ev.q}</div>
+                <p><strong>Your Answer:</strong> ${ev.userAns || '<i>No Answer</i>'}</p>
+                <p><strong>Correct Answer:</strong> <span class="reveal-answer">${ev.correctAns}</span></p>
+                <span class="badge ${ev.isCorrect ? 'badge-correct' : 'badge-incorrect'}">
+                    ${ev.isCorrect ? 'Correct' : 'Incorrect'}
+                </span>
+            </div>`;
+        });
+        html += `</div>`;
+    });
+
+    document.getElementById("review-container").innerHTML = html;
+}
+
+// --- SUMMARY & Analytics UI ---
+function showSummary() {
+    document.getElementById("view-review").classList.add("hidden");
+    document.getElementById("review-header").style.display = "none";
+    document.getElementById("view-summary").classList.remove("hidden");
+    window.scrollTo(0,0);
+
+    const { score, loStats } = evaluateExam();
+    const p = state.personal;
+    const timeStr = new Date().toLocaleString();
+
+    // Pass / Fail Logic
+    const msgDiv = document.getElementById("pass-fail-msg");
+    const statusSpan = document.getElementById("sum-status");
+    if(score >= CONFIG.PASSING_SCORE) {
+        msgDiv.innerHTML = `<div class="alert alert-success">🎉 Congratulations! You have successfully passed the comprehensive examination. Keep up the great work!</div>`;
+        statusSpan.innerText = "PASSED";
+        statusSpan.style.color = "var(--correct)";
+    } else {
+        msgDiv.innerHTML = `<div class="alert alert-warning">Don't be discouraged. Review your learning modules and try again. You can do this!</div>`;
+        statusSpan.innerText = "FAILED";
+        statusSpan.style.color = "var(--incorrect)";
+    }
+
+    document.getElementById("sum-name").innerText = `${p.lastName}, ${p.firstName} ${p.middleName}`.trim();
+    document.getElementById("sum-sex").innerText = p.sex;
+    document.getElementById("sum-section").innerText = p.section;
+    document.getElementById("sum-score").innerText = score;
+    document.getElementById("sum-time").innerText = timeStr;
+
+    // Build QR
+    const qrData = `COC1 EXAM\nName: ${p.lastName}, ${p.firstName} ${p.middleName}\nSection: ${p.section}\nScore: ${score}/55\nStatus: ${score >= CONFIG.PASSING_SCORE ? 'PASSED' : 'FAILED'}\nDate: ${timeStr}`;
+    document.getElementById("qrcode").innerHTML = "";
+    new QRCode(document.getElementById("qrcode"), { text: qrData, width: 160, height: 160 });
+
+    // Build LO Stats
+    let statHtml = "";
+    Object.keys(loStats).forEach(key => {
+        const stat = loStats[key];
+        const pct = stat.t > 0 ? Math.round((stat.c / stat.t) * 100) : 0;
+        statHtml += `<div class="lo-item">
+            <div style="display:flex; justify-content:space-between; font-size:14px;">
+                <span><strong>${key}</strong></span>
+                <span>${stat.c} / ${stat.t} (${pct}%)</span>
+            </div>
+            <div class="lo-bar-bg"><div class="lo-bar-fill" style="width: ${pct}%"></div></div>
+        </div>`;
+    });
+    document.getElementById("lo-text-stats").innerHTML = statHtml;
+}
+
+function retakeExam() {
+    if(confirm("Are you sure? This will wipe your current score and start a fresh randomized exam.")) {
+        localStorage.removeItem('coc1_exam_state');
+        location.reload();
+    }
+}
+</script>
+</body>
+</html>
