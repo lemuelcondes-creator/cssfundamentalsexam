@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS COC 1 Fundamentals Exam</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f0fdfa; }
+        .bg-pattern { background-image: radial-gradient(#bfdbfe 1px, transparent 1px); background-size: 20px 20px; }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .radio-custom:checked + div { border-color: #3b82f6; background-color: #eff6ff; }
+        .radio-custom:checked + div .radio-dot { background-color: #3b82f6; border-color: #3b82f6; }
+        
+        /* Smooth transitions */
+        .page-transition { transition: opacity 0.3s ease-in-out; }
+        .hidden-page { display: none; opacity: 0; }
+        .active-page { display: block; opacity: 1; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #93c5fd; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+    </style>
+</head>
+<body class="bg-blue-50 bg-pattern min-h-screen text-slate-800">
+
+    <!-- Header (Sticky) -->
+    <header id="main-header" class="fixed top-0 w-full z-50 glass-panel border-b border-blue-200 shadow-sm transition-all">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold shadow-md">
+                    <i class="fa-solid fa-laptop-code"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-blue-900 leading-tight">CSS COC 1 Assessment</h1>
+                    <p class="text-xs text-blue-600 font-medium">Computer Systems Servicing</p>
+                </div>
+            </div>
+            
+            <!-- Timer / Score Display -->
+            <div id="status-container" class="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-bold shadow-inner flex items-center gap-2 border border-blue-200 hidden">
+                <i id="status-icon" class="fa-regular fa-clock"></i>
+                <span id="status-text">45:00</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="pt-24 pb-20 max-w-4xl mx-auto px-4">
+        <form id="exam-form" onsubmit="return false;">
+
+            <!-- PAGE 1: Personal Info -->
+            <div id="page-1" class="page-container active-page bg-white rounded-2xl shadow-xl overflow-hidden border border-blue-100">
+                <div class="bg-blue-600 text-white p-6 md:p-8 text-center">
+                    <h2 class="text-3xl font-bold mb-2">Comprehensive Assessment</h2>
+                    <p class="text-blue-100">Please fill in your details to begin the exam.</p>
+                </div>
+                <div class="p-6 md:p-8 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">LAST NAME <span class="text-red-500">*</span></label>
+                            <input type="text" id="pi-last" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none uppercase transition-all" placeholder="e.g. DELA CRUZ">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">FIRST NAME <span class="text-red-500">*</span></label>
+                            <input type="text" id="pi-first" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none uppercase transition-all" placeholder="e.g. JUAN">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">MIDDLE NAME</label>
+                            <input type="text" id="pi-middle" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none uppercase transition-all" placeholder="e.g. SANTOS">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">SECTION <span class="text-red-500">*</span></label>
+                            <select id="pi-section" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none uppercase transition-all bg-white">
+                                <option value="" disabled selected>Select your section</option>
+                                <option value="ICT A">ICT A</option>
+                                <option value="ICT B">ICT B</option>
+                                <option value="ICT C">ICT C</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 mt-6">
+                        <h3 class="font-bold text-blue-800 flex items-center gap-2 mb-2"><i class="fa-solid fa-circle-info"></i> Exam Instructions</h3>
+                        <ul class="list-disc list-inside text-sm text-slate-700 space-y-1">
+                            <li>You have exactly <strong>45 minutes</strong> to complete the exam.</li>
+                            <li>The exam consists of Multiple Choice, True/False, Identification, and Image ID.</li>
+                            <li>Do not refresh the page, or your progress will be lost.</li>
+                            <li>Click "Start Exam" when you are ready. The timer will begin immediately.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 2: Multiple Choice -->
+            <div id="page-2" class="page-container hidden-page">
+                <div class="mb-6 flex flex-col md:flex-row items-baseline justify-between border-b border-blue-200 pb-4">
+                    <h2 class="text-2xl font-bold text-blue-900">Test I: Multiple-Choice</h2>
+                    <p class="text-slate-600 font-medium">30 Items • Select the best answer</p>
+                </div>
+                <div id="mcq-container" class="space-y-6">
+                    <!-- MCQ Items injected here by JS -->
+                </div>
+            </div>
+
+            <!-- PAGE 3: True or False -->
+            <div id="page-3" class="page-container hidden-page">
+                <div class="mb-6 flex flex-col md:flex-row items-baseline justify-between border-b border-blue-200 pb-4">
+                    <h2 class="text-2xl font-bold text-blue-900">Test II: True or False</h2>
+                    <p class="text-slate-600 font-medium">20 Items • Select True if correct, False if incorrect</p>
+                </div>
+                <div id="tf-container" class="space-y-6">
+                    <!-- T/F Items injected here by JS -->
+                </div>
+            </div>
+
+            <!-- PAGE 4: Identification -->
+            <div id="page-4" class="page-container hidden-page">
+                <div class="mb-6 flex flex-col md:flex-row items-baseline justify-between border-b border-blue-200 pb-4">
+                    <h2 class="text-2xl font-bold text-blue-900">Test III: Identification</h2>
+                    <p class="text-slate-600 font-medium">16 Items (20 Points) • Fill in the blanks</p>
+                </div>
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-r-lg text-sm text-yellow-800">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> Spelling counts! Answers are automatically capitalized.
+                </div>
+                <div id="ident-container" class="space-y-6">
+                    <!-- Identification Items injected here by JS -->
+                </div>
+            </div>
+
+            <!-- PAGE 5: Image Identification -->
+            <div id="page-5" class="page-container hidden-page">
+                <div class="mb-6 flex flex-col md:flex-row items-baseline justify-between border-b border-blue-200 pb-4">
+                    <h2 class="text-2xl font-bold text-blue-900">Test IV: Image Identification</h2>
+                    <p class="text-slate-600 font-medium">15 Items • Identify the component shown</p>
+                </div>
+                <div id="imgid-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Image ID Items injected here by JS -->
+                </div>
+            </div>
+
+            <!-- PAGE 6: Results -->
+            <div id="page-6" class="page-container hidden-page text-center">
+                <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-blue-100 max-w-2xl mx-auto">
+                    <div id="result-header" class="p-8 text-white transition-colors duration-500">
+                        <i id="result-icon" class="fa-solid fa-trophy text-6xl mb-4 drop-shadow-md"></i>
+                        <h2 id="result-title" class="text-4xl font-extrabold mb-2">Exam Completed!</h2>
+                        <p id="result-message" class="text-lg opacity-90">Calculating your score...</p>
+                    </div>
+                    
+                    <div class="p-8">
+                        <div class="relative w-48 h-48 mx-auto mb-6">
+                            <svg class="w-full h-full" viewBox="0 0 36 36">
+                                <path class="text-slate-100" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path id="score-ring" class="text-blue-500 transition-all duration-1000 ease-out" stroke-dasharray="0, 100" stroke-width="3" stroke-dashoffset="0" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span id="final-score" class="text-5xl font-black text-slate-800">0</span>
+                                <span class="text-sm font-semibold text-slate-500 border-t border-slate-200 pt-1 mt-1">out of 85</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-xl p-5 text-left mb-8 border border-slate-100">
+                            <h3 class="font-bold text-slate-800 mb-3 border-b pb-2">Examinee Details</h3>
+                            <div class="grid grid-cols-2 gap-y-3 text-sm">
+                                <div class="text-slate-500">Name:</div>
+                                <div id="res-name" class="font-semibold text-slate-800 uppercase">---</div>
+                                <div class="text-slate-500">Section:</div>
+                                <div id="res-section" class="font-semibold text-slate-800 uppercase">---</div>
+                                <div class="text-slate-500">Date/Time:</div>
+                                <div id="res-time" class="font-semibold text-slate-800">---</div>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="enterReviewMode()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all w-full flex items-center justify-center gap-2 text-lg">
+                            <i class="fa-solid fa-magnifying-glass"></i> Review Answers
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Bar (Sticky Bottom) -->
+            <div id="nav-bar" class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40">
+                <div class="max-w-4xl mx-auto flex justify-between items-center gap-4">
+                    <button type="button" id="btn-prev" onclick="changePage(-1)" class="hidden px-6 py-3 rounded-lg font-semibold text-blue-700 bg-blue-100 hover:bg-blue-200 transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Back
+                    </button>
+                    
+                    <div id="page-indicator" class="hidden text-sm font-bold text-slate-400 flex-1 text-center">
+                        Page <span id="current-page-num" class="text-blue-600">1</span> of 5
+                    </div>
+
+                    <button type="button" id="btn-start" onclick="startExam()" class="w-full px-8 py-4 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-lg hover:shadow-blue-500/30 text-lg flex justify-center items-center gap-2">
+                        Start Exam <i class="fa-solid fa-play"></i>
+                    </button>
+                    
+                    <button type="button" id="btn-next" onclick="changePage(1)" class="hidden px-6 py-3 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors flex items-center gap-2">
+                        Next <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    
+                    <button type="button" id="btn-submit" onclick="confirmSubmit()" class="hidden px-8 py-3 rounded-lg font-bold text-white bg-green-500 hover:bg-green-600 transition-colors shadow-lg shadow-green-500/30 flex items-center gap-2">
+                        Submit Exam <i class="fa-solid fa-check-double"></i>
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </main>
+
+    <!-- Custom Modal for Submit Confirmation -->
+    <div id="submit-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm relative z-10 transform scale-95 opacity-0 transition-all duration-200" id="modal-content">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 rounded-full bg-blue-100 text-blue-500 mx-auto flex items-center justify-center text-3xl mb-4">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-2">Submit Exam?</h3>
+                <p class="text-slate-600 mb-6">Are you sure you want to submit your answers? You cannot change them after submission.</p>
+                <div class="flex gap-3">
+                    <button onclick="closeModal()" class="flex-1 px-4 py-2 rounded-lg font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">Cancel</button>
+                    <button onclick="finalizeSubmission()" class="flex-1 px-4 py-2 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors">Yes, Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Data and Logic -->
+    <script>
+        // --- DATA STRUCTURES ---
+
+        const mcqData = [
+            { q: "What is defined as a programmable machine designed to perform arithmetic and logical operations automatically and sequentially?", options: ["Operating System", "Hardware", "Computer", "Processor"], ans: "Computer" },
+            { q: "Which of the following components is a plastic or metal enclosure that houses most of the internal computer components?", options: ["Motherboard", "Back Panel", "Case", "Chipset"], ans: "Case" },
+            { q: "What type of file is described as a single file that perfectly represents the entire contents of a CD, DVD, or BD?", options: ["Executable File (.exe)", "ISO Image", "Readme File", "Zip Archive"], ans: "ISO Image" },
+            { q: "Which hardware component prints text or illustrations on paper?", options: ["Display Adapter", "Monitor", "Output Panel", "Printer"], ans: "Printer" },
+            { q: "What does the acronym AVR stand for in the context of computer power components?", options: ["Audio Video Receiver", "Automatic Voltage Regulator", "Automated Virtual Ram", "Active Voltage Router"], ans: "Automatic Voltage Regulator" },
+            { q: "Which tool is explicitly used to discharge your body’s static electricity before assembling a computer?", options: ["Standard Screwdriver", "Anti-static Wrist Strap", "Mechanical Pliers", "Rubber Gloves"], ans: "Anti-static Wrist Strap" },
+            { q: "What type of software is developed and distributed freely by programmers in various communities and forums?", options: ["Commercial Software", "Operating System", "Freeware", "Enterprise Application"], ans: "Freeware" },
+            { q: "Which set of electronic components found on the motherboard manages the data flow between the processor, memory, and peripherals?", options: ["CPU Socket", "Memory Slot", "Chipset", "ATX Power Connector"], ans: "Chipset" },
+            { q: "Which specific port connects to older hard disk drives and optical drives for data transfer, but has been replaced by SATA connectors?", options: ["IDE Port", "20-Pin ATX Port", "Back Panel Port", "USB Port"], ans: "IDE Port" },
+            { q: "What is the official Microsoft freeware tool that allows you to install Windows 7, 8, and 10 without running an existing operating system?", options: ["Microsoft Installation Wizard", "ISO CD Burner", "Windows USB/DVD Download Tool", "Windows OS Setup Utility"], ans: "Windows USB/DVD Download Tool" },
+            { q: "What is the primary difference between hardware and software?", options: ["Hardware processes data, while software stores it.", "Hardware is the physical machine and devices, while software is the set of programs that use the hardware.", "Hardware is only found inside the case, while software is external.", "Hardware is an application, while software is the operating system."], ans: "Hardware is the physical machine and devices, while software is the set of programs that use the hardware." },
+            { q: "Why is an operating system referred to as 'hidden software' when a brand-new computer comes off the factory assembly line?", options: ["Because it is physically hidden inside the hard drive.", "Because application software cannot communicate directly with hardware and needs the OS to make the hardware work.", "Because it is secretly installed by manufacturers to track hardware usage.", "Because users never interact with the operating system directly."], ans: "Because application software cannot communicate directly with hardware and needs the OS to make the hardware work." },
+            { q: "What is the main purpose of an installer?", options: ["To physically connect new hardware devices to the motherboard.", "To act as a backup for all the executable files on your hard drive.", "To simplify software installation by providing a step-by-step process and copying code to local files for the operating system.", "To permanently delete modified system code from the registry."], ans: "To simplify software installation by providing a step-by-step process and copying code to local files for the operating system." },
+            { q: "What does 'network installation' (netinstall) mean in the context of software deployment?", options: ["Burning an ISO file directly to a disk over a local network.", "Installing a program by physically connecting two computers with an IDE cable.", "Installing a program from a shared network resource, sometimes downloading further packages over the network.", "Installing a network card driver using the Windows USB/DVD tool."], ans: "Installing a program from a shared network resource, sometimes downloading further packages over the network." },
+            { q: "What dictates the type of RAM that can be used within a computer system?", options: ["The Operating System specifications.", "The total capacity of the Hard Disk Drive.", "The available Memory Slots (sockets) on the motherboard.", "The CPU architecture (32-bit vs 64-bit)."], ans: "The available Memory Slots (sockets) on the motherboard." },
+            { q: "Why is it generally recommended to close or disable other running programs before installing a new program, utility, or game?", options: ["To free up physical RAM slots on the motherboard.", "To prevent the operating system from crashing immediately.", "To avoid conflicts and ensure a clean, successful installation process.", "To stop the antivirus from deleting the installer file."], ans: "To avoid conflicts and ensure a clean, successful installation process." },
+            { q: "Based on the computer characteristics mentioned, what does 'speed' specifically refer to?", options: ["The capability of performing about 3-4 million simple instructions.", "The fast connection speed of a network installation.", "How quickly a user can type on the keyboard.", "The rate at which the printer produces illustrations on paper."], ans: "The capability of performing about 3-4 million simple instructions." },
+            { q: "What information does the 'System type' specification provide when checking computer properties?", options: ["The manufacturer and model of the motherboard.", "The version of Windows running and whether the processor is 32-bit (x86) or 64-bit (x64).", "The exact amount of free hard disk space left in the computer.", "The type of installed graphics card on the system."], ans: "The version of Windows running and whether the processor is 32-bit (x86) or 64-bit (x64)." },
+            { q: "How do you view the free space on a drive in Windows 10?", options: ["By expanding the 'Components' section in Device Manager.", "By clicking on 'Display adapters'.", "By right-clicking on the drive in “This PC”, selecting Properties, and looking at the pie chart.", "By exporting the system specs to a text file."], ans: "By right-clicking on the drive in “This PC”, selecting Properties, and looking at the pie chart." },
+            { q: "What is the function of the CPU socket on a motherboard?", options: ["It regulates the input voltage to prevent electrical damage to the system.", "It connects older hard disk drives to the motherboard.", "It manages data flow between memory and external peripherals.", "It provides mechanical and electrical connections allowing the microprocessor to be placed and replaced without soldering."], ans: "It provides mechanical and electrical connections allowing the microprocessor to be placed and replaced without soldering." },
+            { q: "You are tasked to check the specific display graphics card installed on a computer. Following the standard steps, where exactly in the System window should you click and expand to find this information?", options: ["Click 'File', select 'Export', and search the text file.", "Click the Device Manager link and expand 'Display adapters'.", "Open 'This PC', right-click the main drive, and view the pie chart.", "Expand the 'Components' section and select 'Memory slots'."], ans: "Click the Device Manager link and expand 'Display adapters'." },
+            { q: "A user's computer frequently shuts down immediately during short power outages, causing data loss. Which hardware device should they add to their setup to provide emergency power and prevent this?", options: ["Automatic Voltage Regulator (AVR)", "20-Pin ATX Power Connector", "Uninterruptible Power Supply (UPS)", "A high-capacity Chipset"], ans: "Uninterruptible Power Supply (UPS)" },
+            { q: "You need to provide a remote technician with your complete computer specifications to troubleshoot an issue. How can you easily give them this information?", options: ["Take a screenshot of the pie chart in Windows 10.", "Look at the Baseboard Manufacturer physically on the motherboard and call them.", "Click the 'File' menu in the System Information tool, select 'Export,' and save it as a text file to send them.", "Copy the ISO file to a flash drive and mail it."], ans: "Click the 'File' menu in the System Information tool, select 'Export,' and save it as a text file to send them." },
+            { q: "You are about to assemble a PC and need to attach a component that requires a 4-pin connection to give power directly to the Motherboard. Which device's cable will you be plugging into the ATX 4-Pin Power Connector?", options: ["The Hard Disk Drive", "The Power Supply", "The CPU / Microprocessor", "The Back Panel"], ans: "The Power Supply" },
+            { q: "You have downloaded an ISO file of an operating system but your computer has no optical drive. To make a bootable USB installer to run automatically upon turning on the PC, what two steps must you combine according to the materials?", options: ["Run a netinstall and connect the USB to the IDE port.", "Open the ISO with MS Word and save it directly to the flash drive.", "Use the Rufus software, then change the boot order of drives in the computer's BIOS.", "Solder the flash drive directly to the motherboard and press F2."], ans: "Use the Rufus software, then change the boot order of drives in the computer's BIOS." },
+            { q: "Contrast the functions of an AVR and a UPS. Which statement accurately reflects the difference based on their definitions?", options: ["An AVR provides emergency backup battery power, while a UPS connects directly to the 20-pin ATX connector.", "An AVR manages data flow between peripherals, while a UPS cools down the motherboard.", "An AVR maintains output voltage within specified values despite line variations, whereas a UPS specifically provides emergency power when the input source fails.", "An AVR is used for network installations, while a UPS is used for physical installations via ISO."], ans: "An AVR maintains output voltage within specified values despite line variations, whereas a UPS specifically provides emergency power when the input source fails." },
+            { q: "Read carefully: 'Because code is generally copied/generated in multiple locations, uninstallation usually involves more than just erasing the program folder.' Based on this, why is merely deleting a program's folder an incomplete way to remove software?", options: ["Because the physical hardware still expects the software to exist.", "Because an uninstallation may also require modifying or deleting registry files and other system code placed outside the program folder.", "Because the ISO image will automatically restore the erased folder.", "Because the operating system will crash without the erased folder."], ans: "Because an uninstallation may also require modifying or deleting registry files and other system code placed outside the program folder." },
+            { q: "What is the logical relationship between the BIOS setup utility and the installation of a new Operating System via a USB drive?", options: ["The BIOS acts as the word processor used to write the OS code.", "The BIOS must be configured to change the boot order so the computer reads the USB drive installation files automatically upon startup.", "The BIOS is bypassed entirely when using the Windows USB/DVD Download Tool.", "The BIOS is the physical chip that stores the downloaded ISO file."], ans: "The BIOS must be configured to change the boot order so the computer reads the USB drive installation files automatically upon startup." },
+            { q: "If an installer fails to properly prepare a program for execution, which of the following could be a reason?", options: ["The user failed to install a minimal system over the network first.", "The computer did not meet the system requirements, or other programs were left running and interfered.", "The user pressed F2 instead of DEL to open the installation wizard.", "The user exported their system specs while the setup was running."], ans: "The computer did not meet the system requirements, or other programs were left running and interfered." },
+            { q: "How does a custom-developed software fundamentally differ from a general application software like Microsoft Office?", options: ["Custom software is exclusively freeware, while general applications are commercial.", "Custom software runs without an operating system, while general applications need one.", "General applications are developed for any organization, whereas customized software is specifically developed to cater to the specific needs of a particular group.", "General applications only use IDE ports, while custom software uses SATA ports."], ans: "General applications are developed for any organization, whereas customized software is specifically developed to cater to the specific needs of a particular group." }
+        ];
+
+        const tfData = [
+            { q: "The term 'hardware' refers to the set of programs that make use of the machine for performing various functions.", ans: "False" },
+            { q: "An ISO image is a single file that acts as a perfect representation of an entire CD, DVD, or BD.", ans: "True" },
+            { q: "A computer case is a plastic or metal enclosure that houses most of the computer components.", ans: "True" },
+            { q: "The IDE port on a motherboard is used to connect a monitor to the system.", ans: "False" },
+            { q: "The Anti-static Wrist Strap or Wrist Band is used to discharge your body’s static electricity.", ans: "True" },
+            { q: "Application software, such as word processing programs, can communicate directly with the computer hardware without needing an operating system.", ans: "False" },
+            { q: "A chipset is a set of electronic components in an integrated circuit that manages data flow between the processor, memory, and peripherals.", ans: "True" },
+            { q: "Software can only be sold commercially and is never developed and distributed freely by programmers.", ans: "False" },
+            { q: "The CPU socket is a mechanical component that requires soldering every time a microprocessor is placed or replaced.", ans: "False" },
+            { q: "The Windows USB/DVD Download Tool allows you to install Windows without needing an existing operating system running on your computer.", ans: "True" },
+            { q: "If an application installer prompts you to reboot the computer after finishing the installation process, you should ignore it and open the application immediately.", ans: "False" },
+            { q: "To see a pie chart representation of your free hard disk space on Windows 10/11, you must right-click on the drive and select Properties.", ans: "True" },
+            { q: "If the main power fails in your home, having an Automatic Voltage Regulator (AVR) will provide the emergency battery power needed to keep your PC running.", ans: "False" },
+            { q: "When configuring the BIOS on an ASRock motherboard, you can usually press F2 or the DEL key to enter the Setup Utility.", ans: "True" },
+            { q: "To determine if you have a 32-bit (x86) or 64-bit (x64) processor, you should check the 'System type' specification in your computer settings.", ans: "True" },
+            { q: "Because an installation typically involves generating code and registry files in multiple locations, uninstalling software is as simple as deleting the main program folder.", ans: "False" },
+            { q: "Both the 4-Pin and 20-Pin ATX Power Connectors serve the same overarching purpose: routing power from the Power Supply to the Motherboard.", ans: "True" },
+            { q: "General application software can never be customized or tailor-fitted; only fully customized software built from scratch can meet specific organizational needs.", ans: "False" },
+            { q: "Changing the boot order in the BIOS is necessary when installing an OS from a flash drive because it instructs the system to look for an installer on the USB device before trying to load from the blank hard drive.", ans: "True" },
+            { q: "An older IDE cable can connect perfectly with a modern SATA connector without any adapters because they serve the exact same data transfer function.", ans: "False" }
+        ];
+
+        // Trainer Q handles separately to ensure it is always first
+        const trainerQ = { q: "What is the name of your CSS Trainer/Teacher?", validAnswers: [], isTrainer: true }; 
+        // NOTE: Since the instructor name varies, the system will accept ANY non-empty text for this question and give 5 points.
+        
+        const identData = [
+            { q: "A/An __________ is a programmable machine designed to perform arithmetic and logical operations automatically and sequentially.", validAnswers: ["COMPUTER"] },
+            { q: "The physical machine itself and its connected devices such as the monitor, keyboard, and mouse are collectively categorized as __________.", validAnswers: ["HARDWARE"] },
+            { q: "The __________ is a plastic or metal enclosure that houses most of the internal computer parts or components.", validAnswers: ["CASE", "COMPUTER CASE"] },
+            { q: "The most common freeware tool used to create a bootable flash drive from an ISO file is called __________.", validAnswers: ["WINDOWS", "WINDOWS USB/DVD DOWNLOAD TOOL"] },
+            { q: "A/An __________ is a piece of software that simplifies the process of installing software by providing a step-by-step process.", validAnswers: ["INSTALLER"] },
+            { q: "The main software that controls access to all hardware and allows application software to function is called the __________.", validAnswers: ["OPERATING SYSTEM", "OS"] },
+            { q: "The __________ slot, sometimes numbering 2 to 4 on a motherboard, determines the type of RAM used with the computer.", validAnswers: ["MEMORY", "RAM"] },
+            { q: "An installation of a program from a shared network resource, sometimes requiring a minimal system download first, is known as a __________ installation (or netinstall).", validAnswers: ["NETWORK"] },
+            { q: "The __________ on a motherboard provides external Input and Output connection ports for devices like mice, keyboards, and network cables.", validAnswers: ["BACK PANEL"] },
+            { q: "The manual or the __________ file contains exact instructions on how to install a program and is usually found in the same directory as the installation files.", validAnswers: ["README", "README FILE"] },
+            { q: "After pressing the designated key to enter the BIOS Setup Utility, when you are finished making changes, you should choose the '__________ & Exit' option to keep your modifications.", validAnswers: ["SAVE"] },
+            { q: "To check your installed graphics adapter, you need to open the Device Manager and expand the '__________ adapters' section.", validAnswers: ["DISPLAY"] },
+            { q: "If you want to install software on a brand-new custom-built PC using a USB drive, you must access the BIOS and change the __________ order of the drives.", validAnswers: ["BOOT"] },
+            { q: "While an AVR maintains output voltage within specified values against variations, a/an __________ is the specific electrical apparatus that provides actual emergency power when the mains power fails.", validAnswers: ["UNINTERRUPTIBLE POWER SUPPLY", "UPS"] },
+            { q: "Because uninstallation requires more than just erasing a folder, a complete removal process often dictates that system code and __________ files may need to be modified or deleted.", validAnswers: ["REGISTRY"] }
+        ];
+
+        const imgData = [
+            // PROGRAMMERS NOTE: Add image URLs in the 'imgSrc' property
+            { placeholder: "Image of a PCI SLOT", ans: "PCI SLOT", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=PCI+SLOT+IMAGE" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of FRONT PANEL CONNECTORS", ans: "FRONT PANEL CONNECTORS", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=FRONT+PANEL+CONN" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of CMOS BATTERY", ans: "CMOS BATTERY", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=CMOS+BATTERY" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of BACK PANEL", ans: "BACK PANEL", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=BACK+PANEL" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of an SSD", ans: "SSD", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=SSD" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a LAN CARD", ans: "LAN CARD", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=LAN+CARD" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a PS/2 MOUSE port/plug", ans: "PS/2 MOUSE", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=PS2+MOUSE" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a USB port/plug", ans: "USB", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=USB" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a VGA CABLE", ans: "VGA CABLE", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=VGA+CABLE" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a SATA CABLE", ans: "SATA CABLE", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=SATA+CABLE" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a POWER SUPPLY UNIT", ans: "POWER SUPPLY UNIT", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=POWER+SUPPLY" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of an ANTI-STATIC WRIST STRAP", ans: "ANTI-STATIC WRIST STRAP", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=ANTI-STATIC+STRAP" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a MOTHERBOARD", ans: "MOTHERBOARD", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=MOTHERBOARD" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a GRAPHICS CARD", ans: "GRAPHICS CARD", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=GRAPHICS+CARD" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a CPU SOCKET", ans: "CPU SOCKET", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=CPU+SOCKET" } // ADD IMAGE LINK HERE
+        ];
+
+        // --- STATE VARIABLES ---
+        let currentPage = 1;
+        const totalPages = 5;
+        let timeLeft = 45 * 60; // 45 minutes
+        let timerInterval;
+        let isExamActive = false;
+        let isReviewMode = false;
+        let totalScore = 0;
+
+        // --- UTILITY: SHUFFLE ---
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        // --- INITIALIZATION ---
+        function initExam() {
+            // Shuffle data arrays
+            const sMcq = shuffle([...mcqData]);
+            const sTf = shuffle([...tfData]);
+            const sIdentList = shuffle([...identData]);
+            const sIdent = [trainerQ, ...sIdentList]; // Enforce trainerQ at pos 0
+            const sImg = shuffle([...imgData]);
+
+            // Render Page 2: MCQ
+            const mcqBox = document.getElementById('mcq-container');
+            sMcq.forEach((item, index) => {
+                let opts = shuffle([...item.options]);
+                let optHTML = opts.map((opt, i) => `
+                    <label class="cursor-pointer flex items-center relative group">
+                        <input type="radio" name="mcq_${index}" value="${opt.replace(/"/g, '&quot;')}" class="peer sr-only radio-custom" data-correct="${opt === item.ans}">
+                        <div class="w-full p-4 rounded-xl border border-slate-200 group-hover:border-blue-300 transition-colors flex items-center gap-3">
+                            <div class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center radio-dot transition-colors"></div>
+                            <span class="text-slate-700 font-medium">${opt}</span>
+                        </div>
+                    </label>
+                `).join('');
+
+                mcqBox.innerHTML += `
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm q-card" data-type="mcq" data-ans="${item.ans.replace(/"/g, '&quot;')}">
+                        <h3 class="font-bold text-slate-800 mb-4 text-lg"><span class="text-blue-500 mr-2">${index + 1}.</span> ${item.q}</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${optHTML}</div>
+                        <div class="review-feedback hidden mt-3 p-3 rounded-lg text-sm font-bold"></div>
+                    </div>
+                `;
+            });
+
+            // Render Page 3: T/F
+            const tfBox = document.getElementById('tf-container');
+            sTf.forEach((item, index) => {
+                tfBox.innerHTML += `
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm q-card flex flex-col md:flex-row md:items-center justify-between gap-4" data-type="tf" data-ans="${item.ans}">
+                        <h3 class="font-bold text-slate-800 text-lg flex-1"><span class="text-blue-500 mr-2">${index + 1}.</span> ${item.q}</h3>
+                        <div class="flex gap-3 min-w-[160px]">
+                            <label class="flex-1 cursor-pointer">
+                                <input type="radio" name="tf_${index}" value="True" class="peer sr-only radio-custom">
+                                <div class="text-center p-3 rounded-xl border border-slate-200 peer-hover:border-blue-300 transition-colors font-bold text-slate-600">True</div>
+                            </label>
+                            <label class="flex-1 cursor-pointer">
+                                <input type="radio" name="tf_${index}" value="False" class="peer sr-only radio-custom">
+                                <div class="text-center p-3 rounded-xl border border-slate-200 peer-hover:border-blue-300 transition-colors font-bold text-slate-600">False</div>
+                            </label>
+                        </div>
+                        <div class="review-feedback hidden w-full mt-2 p-3 rounded-lg text-sm font-bold"></div>
+                    </div>
+                `;
+            });
+
+            // Render Page 4: Identification
+            const identBox = document.getElementById('ident-container');
+            sIdent.forEach((item, index) => {
+                const pts = item.isTrainer ? '(5 Points)' : '(1 Point)';
+                const ansData = item.isTrainer ? 'ANY' : item.validAnswers.join('|');
+                identBox.innerHTML += `
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm q-card" data-type="ident" data-ans="${ansData}" data-trainer="${item.isTrainer ? 'true' : 'false'}">
+                        <h3 class="font-bold text-slate-800 mb-3 text-lg"><span class="text-blue-500 mr-2">${index + 1}.</span> ${item.q} <span class="text-blue-400 text-sm font-normal ml-1">${pts}</span></h3>
+                        <input type="text" class="ident-input w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none uppercase font-semibold text-blue-900 bg-blue-50/30" placeholder="TYPE YOUR ANSWER HERE" oninput="this.value = this.value.toUpperCase()">
+                        <div class="review-feedback hidden mt-3 p-3 rounded-lg text-sm font-bold"></div>
+                    </div>
+                `;
+            });
+
+            // Render Page 5: Image ID
+            const imgBox = document.getElementById('imgid-container');
+            sImg.forEach((item, index) => {
+                imgBox.innerHTML += `
+                    <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm q-card flex flex-col" data-type="img" data-ans="${item.ans}">
+                        <div class="font-bold text-slate-500 mb-2 text-sm uppercase tracking-wider">Item ${index + 1}</div>
+                        <div class="h-48 w-full bg-slate-100 rounded-xl mb-4 overflow-hidden border border-slate-200 flex items-center justify-center relative">
+                            <img src="${item.imgSrc}" alt="Component Image" class="max-w-full max-h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <span class="text-slate-400 text-sm text-center px-4 hidden">${item.placeholder} <br><br> (Image URL needed in code)</span>
+                        </div>
+                        <input type="text" class="ident-input mt-auto w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none uppercase font-semibold text-center text-blue-900 bg-blue-50/30" placeholder="IDENTIFY IMAGE" oninput="this.value = this.value.toUpperCase()">
+                        <div class="review-feedback hidden mt-3 p-3 rounded-lg text-sm font-bold"></div>
+                    </div>
+                `;
+            });
+        }
+
+        window.onload = initExam;
+
+        // --- NAVIGATION LOGIC ---
+        function changePage(step) {
+            // Hide current
+            document.getElementById(`page-${currentPage}`).classList.remove('active-page');
+            document.getElementById(`page-${currentPage}`).classList.add('hidden-page');
+            
+            currentPage += step;
+            
+            // Show new
+            document.getElementById(`page-${currentPage}`).classList.remove('hidden-page');
+            document.getElementById(`page-${currentPage}`).classList.add('active-page');
+            window.scrollTo(0,0);
+            updateNav();
+        }
+
+        function updateNav() {
+            document.getElementById('current-page-num').innerText = currentPage - 1;
+
+            if (currentPage === 1 || isReviewMode) {
+                document.getElementById('nav-bar').style.display = 'none';
+                return;
+            } else {
+                document.getElementById('nav-bar').style.display = 'block';
+            }
+
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            const btnSubmit = document.getElementById('btn-submit');
+            const indicator = document.getElementById('page-indicator');
+            const btnStart = document.getElementById('btn-start');
+
+            btnStart.classList.add('hidden');
+            indicator.classList.remove('hidden');
+
+            if (currentPage === 2) {
+                btnPrev.classList.add('hidden');
+            } else {
+                btnPrev.classList.remove('hidden');
+            }
+
+            if (currentPage === totalPages) {
+                btnNext.classList.add('hidden');
+                btnSubmit.classList.remove('hidden');
+            } else {
+                btnNext.classList.remove('hidden');
+                btnSubmit.classList.add('hidden');
+            }
+        }
+
+        function startExam() {
+            const last = document.getElementById('pi-last').value.trim();
+            const first = document.getElementById('pi-first').value.trim();
+            const sec = document.getElementById('pi-section').value.trim();
+
+            if (!last || !first || !sec) {
+                alert("Please fill in your Last Name, First Name, and Section before starting.");
+                return;
+            }
+
+            document.getElementById('res-name').innerText = `${last}, ${first} ${document.getElementById('pi-middle').value}`.trim();
+            document.getElementById('res-section').innerText = sec;
+
+            isExamActive = true;
+            document.getElementById('status-container').classList.remove('hidden');
+            startTimer();
+            changePage(1); // Go to page 2
+        }
+
+        // --- TIMER LOGIC ---
+        function startTimer() {
+            const display = document.getElementById('status-text');
+            timerInterval = setInterval(() => {
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    finalizeSubmission(true); // Auto submit
+                    return;
+                }
+                timeLeft--;
+                let m = Math.floor(timeLeft / 60);
+                let s = timeLeft % 60;
+                display.innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+                
+                if(timeLeft <= 300) { // 5 mins warning
+                    document.getElementById('status-container').classList.remove('bg-blue-100', 'text-blue-800');
+                    document.getElementById('status-container').classList.add('bg-red-100', 'text-red-600', 'animate-pulse');
+                }
+            }, 1000);
+        }
+
+        // --- SUBMISSION MODAL ---
+        function confirmSubmit() {
+            document.getElementById('submit-modal').classList.remove('hidden');
+            document.getElementById('submit-modal').classList.add('flex');
+            setTimeout(() => {
+                document.getElementById('modal-content').classList.remove('scale-95', 'opacity-0');
+                document.getElementById('modal-content').classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            document.getElementById('modal-content').classList.remove('scale-100', 'opacity-100');
+            document.getElementById('modal-content').classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                document.getElementById('submit-modal').classList.add('hidden');
+                document.getElementById('submit-modal').classList.remove('flex');
+            }, 200);
+        }
+
+        // --- GRADING AND RESULTS ---
+        function finalizeSubmission(isAuto = false) {
+            closeModal();
+            clearInterval(timerInterval);
+            isExamActive = false;
+
+            if (isAuto) alert("Time is up! Your exam has been automatically submitted.");
+
+            document.getElementById('status-container').classList.add('hidden');
+            document.getElementById('nav-bar').style.display = 'none';
+
+            calculateScore();
+
+            // Setup Results View
+            document.getElementById('res-time').innerText = new Date().toLocaleString();
+            
+            // Navigate to Results directly by hiding all and showing page 6
+            document.querySelectorAll('.page-container').forEach(p => p.classList.add('hidden-page', 'active-page'));
+            document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active-page'));
+            
+            const p6 = document.getElementById('page-6');
+            p6.classList.remove('hidden-page');
+            p6.classList.add('active-page');
+
+            animateScore();
+        }
+
+        function calculateScore() {
+            totalScore = 0;
+            const cards = document.querySelectorAll('.q-card');
+            
+            cards.forEach(card => {
+                let type = card.getAttribute('data-type');
+                let correctAns = card.getAttribute('data-ans');
+                let isTrainer = card.getAttribute('data-trainer') === 'true';
+                let isCorrect = false;
+                let userAnsText = "No Answer";
+
+                if (type === 'mcq' || type === 'tf') {
+                    let checked = card.querySelector('input[type="radio"]:checked');
+                    if (checked) {
+                        userAnsText = checked.value;
+                        if (checked.value === correctAns) isCorrect = true;
+                    }
+                } else if (type === 'ident' || type === 'img') {
+                    let input = card.querySelector('input[type="text"]');
+                    let val = input.value.trim().toUpperCase();
+                    if (val) userAnsText = val;
+
+                    if (isTrainer) {
+                        if (val !== "") isCorrect = true; // Any non-empty answer is correct
+                    } else {
+                        let validArr = correctAns.split('|');
+                        if (validArr.includes(val)) isCorrect = true;
+                    }
+                }
+
+                // Assign Points
+                if (isCorrect) {
+                    totalScore += isTrainer ? 5 : 1;
+                }
+
+                // Attach feedback data for review mode
+                let feedbackDiv = card.querySelector('.review-feedback');
+                if (isCorrect) {
+                    feedbackDiv.innerHTML = `<i class="fa-solid fa-check-circle mr-1"></i> Correct (+${isTrainer ? 5 : 1})`;
+                    feedbackDiv.classList.add('bg-green-100', 'text-green-700');
+                    card.classList.add('border-green-300', 'bg-green-50/30');
+                } else {
+                    let expectedText = isTrainer ? "Any valid name" : correctAns.replace(/\|/g, " OR ");
+                    feedbackDiv.innerHTML = `<i class="fa-solid fa-xmark-circle mr-1"></i> Incorrect (0 pts). <br><span class="text-slate-600 font-normal mt-1 block">Correct Answer: <b>${expectedText}</b></span>`;
+                    feedbackDiv.classList.add('bg-red-100', 'text-red-700');
+                    card.classList.add('border-red-300', 'bg-red-50/30');
+                    
+                    // Highlight selected wrong radio visually
+                    if ((type === 'mcq' || type === 'tf') && card.querySelector('input[type="radio"]:checked')) {
+                        card.querySelector('input[type="radio"]:checked').nextElementSibling.classList.add('!border-red-500', '!bg-red-50');
+                    }
+                }
+            });
+        }
+
+        function animateScore() {
+            const display = document.getElementById('final-score');
+            const ring = document.getElementById('score-ring');
+            const header = document.getElementById('result-header');
+            const icon = document.getElementById('result-icon');
+            const title = document.getElementById('result-title');
+            const msg = document.getElementById('result-message');
+            
+            const passScore = 68;
+            const maxScore = 85;
+            let current = 0;
+            
+            const isPass = totalScore >= passScore;
+            
+            setTimeout(() => {
+                // Determine styling based on Pass/Fail
+                if (isPass) {
+                    header.classList.add('bg-green-500');
+                    icon.className = "fa-solid fa-medal text-6xl mb-4 drop-shadow-md";
+                    title.innerText = "Congratulations!";
+                    msg.innerText = "You passed the examination brilliantly.";
+                    ring.classList.replace('text-blue-500', 'text-green-500');
+                } else {
+                    header.classList.add('bg-red-500');
+                    icon.className = "fa-solid fa-book-open text-6xl mb-4 drop-shadow-md";
+                    title.innerText = "Keep Trying!";
+                    msg.innerText = "You failed. Review your materials and try again.";
+                    ring.classList.replace('text-blue-500', 'text-red-500');
+                }
+
+                const percentage = (totalScore / maxScore) * 100;
+                ring.style.strokeDasharray = `${percentage}, 100`;
+
+                const interval = setInterval(() => {
+                    if (current >= totalScore) {
+                        clearInterval(interval);
+                        display.innerText = totalScore;
+                    } else {
+                        current++;
+                        display.innerText = current;
+                    }
+                }, 20);
+            }, 500);
+        }
+
+        // --- REVIEW MODE ---
+        function enterReviewMode() {
+            isReviewMode = true;
+            
+            // Lock all inputs
+            document.querySelectorAll('input').forEach(input => {
+                input.disabled = true;
+                if(input.type === 'text') input.classList.add('opacity-80', 'cursor-not-allowed');
+            });
+            document.querySelectorAll('label').forEach(lbl => lbl.classList.remove('cursor-pointer'));
+            document.querySelectorAll('.cursor-pointer').forEach(el => el.classList.remove('cursor-pointer'));
+
+            // Show feedbacks
+            document.querySelectorAll('.review-feedback').forEach(fb => fb.classList.remove('hidden'));
+
+            // Sticky Header Update
+            document.getElementById('main-header').classList.add('bg-slate-800', '!border-slate-700');
+            document.querySelector('#main-header h1').classList.replace('text-blue-900', 'text-white');
+            
+            const statusBox = document.getElementById('status-container');
+            statusBox.classList.remove('hidden', 'bg-blue-100', 'text-blue-800', 'bg-red-100', 'text-red-600', 'animate-pulse');
+            statusBox.classList.add('bg-green-500', 'text-white', 'border-none');
+            document.getElementById('status-icon').className = 'fa-solid fa-star';
+            document.getElementById('status-text').innerText = `Score: ${totalScore} / 85`;
+
+            // Reset view to page 2 (First Test)
+            document.querySelectorAll('.page-container').forEach(p => p.classList.add('hidden-page'));
+            document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active-page'));
+            
+            currentPage = 2; // Test I
+            document.getElementById('page-2').classList.remove('hidden-page');
+            document.getElementById('page-2').classList.add('active-page');
+            
+            window.scrollTo(0,0);
+            
+            // Setup review pagination structure
+            document.getElementById('nav-bar').style.display = 'block';
+            document.getElementById('btn-submit').style.display = 'none';
+            updateReviewNav();
+        }
+
+        function updateReviewNav() {
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            const indicator = document.getElementById('page-indicator');
+            
+            indicator.innerHTML = `Reviewing Test ${currentPage - 1} of 4`;
+            
+            if (currentPage === 2) btnPrev.classList.add('hidden');
+            else btnPrev.classList.remove('hidden');
+
+            if (currentPage === 5) {
+                btnNext.innerHTML = '<i class="fa-solid fa-flag-checkered"></i> Finish Review';
+                btnNext.onclick = () => window.location.reload(); // Reloads app to restart
+            } else {
+                btnNext.innerHTML = 'Next <i class="fa-solid fa-arrow-right"></i>';
+                btnNext.onclick = () => { changePage(1); updateReviewNav(); };
+            }
+            btnPrev.onclick = () => { changePage(-1); updateReviewNav(); };
+        }
+
+    </script>
+</body>
+</html>
