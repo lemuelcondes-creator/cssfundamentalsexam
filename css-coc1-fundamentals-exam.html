@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS COC 1 Fundamentals: Comprehensive Assessment</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --accent: #60a5fa;
+            --bg: #f0f9ff;
+            --surface: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #4b5563;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #e5e7eb;
+            --radius: 8px;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { margin: 0; padding: 0; background-color: var(--bg); color: var(--text-main); line-height: 1.6; }
+        
+        header {
+            background-color: var(--primary); color: white; padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header-title { font-size: 1.25rem; font-weight: bold; }
+        .timer-score-container { font-size: 1.25rem; font-weight: bold; background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: var(--radius); }
+        
+        main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+        .page { display: none; background: var(--surface); padding: 2.5rem; border-radius: var(--radius); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .page.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1, h2, h3 { color: var(--primary); margin-top: 0; }
+        hr { border: 0; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+        /* Form Elements */
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-muted); }
+        input[type="text"], select {
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px;
+            font-size: 1rem; transition: border-color 0.2s;
+        }
+        input[type="text"]:focus, select:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        input.uppercase-input { text-transform: uppercase; }
+
+        /* Questions */
+        .question-card { background: #f8fafc; padding: 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem; border: 1px solid var(--border); }
+        .question-text { font-weight: 600; margin-bottom: 1rem; font-size: 1.1rem; }
+        .points-badge { display: inline-block; background: var(--secondary); color: white; font-size: 0.8rem; padding: 0.2rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; vertical-align: middle; }
+        
+        .options-grid { display: grid; gap: 0.75rem; }
+        .option-label {
+            display: flex; align-items: center; padding: 0.75rem 1rem; background: var(--surface);
+            border: 1px solid var(--border); border-radius: 4px; cursor: pointer; transition: all 0.2s;
+        }
+        .option-label:hover { background: #eff6ff; border-color: var(--accent); }
+        .option-label input { margin-right: 1rem; cursor: pointer; width: 1.2rem; height: 1.2rem; accent-color: var(--primary); }
+
+        .image-display {
+            width: 100%; max-width: 400px; height: auto; max-height: 250px; object-fit: contain;
+            margin-bottom: 1rem; border-radius: 4px; border: 1px solid var(--border); display: block;
+        }
+        .image-placeholder {
+            width: 100%; max-width: 400px; height: 250px; background: #e2e8f0; display: flex;
+            align-items: center; justify-content: center; margin-bottom: 1rem; border-radius: 4px;
+            color: #64748b; font-weight: bold; border: 2px dashed #cbd5e1;
+        }
+
+        /* Navigation */
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+        button {
+            padding: 0.75rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: bold;
+            cursor: pointer; transition: background-color 0.2s, transform 0.1s;
+        }
+        button:active { transform: scale(0.98); }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: #172554; }
+        .btn-secondary { background-color: #e5e7eb; color: var(--text-main); }
+        .btn-secondary:hover { background-color: #d1d5db; }
+        .btn-success { background-color: var(--success); color: white; }
+        .btn-success:hover { background-color: #059669; }
+
+        /* Results & Review */
+        .results-header { text-align: center; margin-bottom: 2rem; }
+        .score-display { font-size: 5rem; font-weight: bold; color: var(--primary); line-height: 1; margin: 1rem 0; }
+        .status-pass { color: var(--success); font-size: 2rem; font-weight: bold; }
+        .status-fail { color: var(--danger); font-size: 2rem; font-weight: bold; }
+        .student-info-card { background: #f8fafc; padding: 1.5rem; border-radius: var(--radius); margin-bottom: 2rem; text-align: left; border-left: 5px solid var(--primary); }
+        
+        .review-correct { border-left: 4px solid var(--success) !important; background: #ecfdf5 !important; }
+        .review-incorrect { border-left: 4px solid var(--danger) !important; background: #fef2f2 !important; }
+        .correct-answer-text { color: var(--success); font-weight: bold; margin-top: 0.5rem; font-size: 0.9rem; }
+        .user-answer-text { font-style: italic; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-title">CSS COC 1 Fundamentals</div>
+    <div class="timer-score-container" id="global-timer">45:00</div>
+</header>
+
+<main id="app-container">
+    <div id="page-1" class="page active">
+        <h2>Personal Information</h2>
+        <p>Please fill out your details before starting the examination. You have 45 minutes to complete all sections.</p>
+        <hr>
+        <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" required placeholder="Dela Cruz">
+        </div>
+        <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" required placeholder="Juan">
+        </div>
+        <div class="form-group">
+            <label for="middleName">Middle Name</label>
+            <input type="text" id="middleName" placeholder="Santos">
+        </div>
+        <div class="form-group">
+            <label for="section">Section</label>
+            <select id="section" required>
+                <option value="" disabled selected>Select your section...</option>
+                <option value="ICT-A">ICT-A</option>
+                <option value="ICT-B">ICT-B</option>
+                <option value="ICT-C">ICT-C</option>
+            </select>
+        </div>
+        <div class="nav-buttons" style="justify-content: flex-end;">
+            <button class="btn-primary" onclick="startExam()">Start Examination</button>
+        </div>
+    </div>
+
+    <div id="quiz-pages-container"></div>
+</main>
+
+<script>
+    // --- EXAM DATA ---
+    const rawData = {
+        mc: [
+            { q: "What is defined as a programmable machine designed to perform arithmetic and logical operations automatically and sequentially?", options: ["Operating System", "Hardware", "Computer", "Processor"], a: "Computer" },
+            { q: "Which of the following components is a plastic or metal enclosure that houses most of the internal computer components?", options: ["Motherboard", "Back Panel", "Case", "Chipset"], a: "Case" },
+            { q: "What type of file is described as a single file that perfectly represents the entire contents of a CD, DVD, or BD?", options: ["Executable File (.exe)", "ISO Image", "Readme File", "Zip Archive"], a: "ISO Image" },
+            { q: "Which hardware component prints text or illustrations on paper?", options: ["Display Adapter", "Monitor", "Output Panel", "Printer"], a: "Printer" },
+            { q: "What does the acronym AVR stand for in the context of computer power components?", options: ["Audio Video Receiver", "Automatic Voltage Regulator", "Automated Virtual Ram", "Active Voltage Router"], a: "Automatic Voltage Regulator" },
+            { q: "Which tool is explicitly used to discharge your body’s static electricity before assembling a computer?", options: ["Standard Screwdriver", "Anti-static Wrist Strap", "Mechanical Pliers", "Rubber Gloves"], a: "Anti-static Wrist Strap" },
+            { q: "What type of software is developed and distributed freely by programmers in various communities and forums?", options: ["Commercial Software", "Operating System", "Freeware", "Enterprise Application"], a: "Freeware" },
+            { q: "Which set of electronic components found on the motherboard manages the data flow between the processor, memory, and peripherals?", options: ["CPU Socket", "Memory Slot", "Chipset", "ATX Power Connector"], a: "Chipset" },
+            { q: "Which specific port connects to older hard disk drives and optical drives for data transfer, but has been replaced by SATA connectors?", options: ["IDE Port", "20-Pin ATX Port", "Back Panel Port", "USB Port"], a: "IDE Port" },
+            { q: "What is the official Microsoft freeware tool that allows you to install Windows 7, 8, and 10 without running an existing operating system?", options: ["Microsoft Installation Wizard", "ISO CD Burner", "Windows USB/DVD Download Tool", "Windows OS Setup Utility"], a: "Windows USB/DVD Download Tool" },
+            { q: "What is the primary difference between hardware and software?", options: ["Hardware processes data, while software stores it.", "Hardware is the physical machine and devices, while software is the set of programs that use the hardware.", "Hardware is only found inside the case, while software is external.", "Hardware is an application, while software is the operating system."], a: "Hardware is the physical machine and devices, while software is the set of programs that use the hardware." },
+            { q: "Why is an operating system referred to as 'hidden software' when a brand-new computer comes off the factory assembly line?", options: ["Because it is physically hidden inside the hard drive.", "Because application software cannot communicate directly with hardware and needs the OS to make the hardware work.", "Because it is secretly installed by manufacturers to track hardware usage.", "Because users never interact with the operating system directly."], a: "Because application software cannot communicate directly with hardware and needs the OS to make the hardware work." },
+            { q: "What is the main purpose of an installer?", options: ["To physically connect new hardware devices to the motherboard.", "To act as a backup for all the executable files on your hard drive.", "To simplify software installation by providing a step-by-step process and copying code to local files for the operating system.", "To permanently delete modified system code from the registry."], a: "To simplify software installation by providing a step-by-step process and copying code to local files for the operating system." },
+            { q: "What does 'network installation' (netinstall) mean in the context of software deployment?", options: ["Burning an ISO file directly to a disk over a local network.", "Installing a program by physically connecting two computers with an IDE cable.", "Installing a program from a shared network resource, sometimes downloading further packages over the network.", "Installing a network card driver using the Windows USB/DVD tool."], a: "Installing a program from a shared network resource, sometimes downloading further packages over the network." },
+            { q: "What dictates the type of RAM that can be used within a computer system?", options: ["The Operating System specifications.", "The total capacity of the Hard Disk Drive.", "The available Memory Slots (sockets) on the motherboard.", "The CPU architecture (32-bit vs 64-bit)."], a: "The available Memory Slots (sockets) on the motherboard." },
+            { q: "Why is it generally recommended to close or disable other running programs before installing a new program, utility, or game?", options: ["To free up physical RAM slots on the motherboard.", "To prevent the operating system from crashing immediately.", "To avoid conflicts and ensure a clean, successful installation process.", "To stop the antivirus from deleting the installer file."], a: "To avoid conflicts and ensure a clean, successful installation process." },
+            { q: "Based on the computer characteristics mentioned, what does 'speed' specifically refer to?", options: ["The capability of performing about 3-4 million simple instructions.", "The fast connection speed of a network installation.", "How quickly a user can type on the keyboard.", "The rate at which the printer produces illustrations on paper."], a: "The capability of performing about 3-4 million simple instructions." },
+            { q: "What information does the 'System type' specification provide when checking computer properties?", options: ["The manufacturer and model of the motherboard.", "The version of Windows running and whether the processor is 32-bit (x86) or 64-bit (x64).", "The exact amount of free hard disk space left in the computer.", "The type of installed graphics card on the system."], a: "The version of Windows running and whether the processor is 32-bit (x86) or 64-bit (x64)." },
+            { q: "How do you view the free space on a drive in Windows 10?", options: ["By expanding the 'Components' section in Device Manager.", "By clicking on 'Display adapters'.", "By right-clicking on the drive in 'This PC', selecting Properties, and looking at the pie chart.", "By exporting the system specs to a text file."], a: "By right-clicking on the drive in 'This PC', selecting Properties, and looking at the pie chart." },
+            { q: "What is the function of the CPU socket on a motherboard?", options: ["It regulates the input voltage to prevent electrical damage to the system.", "It connects older hard disk drives to the motherboard.", "It manages data flow between memory and external peripherals.", "It provides mechanical and electrical connections allowing the microprocessor to be placed and replaced without soldering."], a: "It provides mechanical and electrical connections allowing the microprocessor to be placed and replaced without soldering." },
+            { q: "You are tasked to check the specific display graphics card installed on a computer. Following the standard steps, where exactly in the System window should you click and expand to find this information?", options: ["Click 'File', select 'Export', and search the text file.", "Click the Device Manager link and expand 'Display adapters'.", "Open 'This PC', right-click the main drive, and view the pie chart.", "Expand the 'Components' section and select 'Memory slots'."], a: "Click the Device Manager link and expand 'Display adapters'." },
+            { q: "A user's computer frequently shuts down immediately during short power outages, causing data loss. Which hardware device should they add to their setup to provide emergency power and prevent this?", options: ["Automatic Voltage Regulator (AVR)", "20-Pin ATX Power Connector", "Uninterruptible Power Supply (UPS)", "A high-capacity Chipset"], a: "Uninterruptible Power Supply (UPS)" },
+            { q: "You need to provide a remote technician with your complete computer specifications to troubleshoot an issue. How can you easily give them this information?", options: ["Take a screenshot of the pie chart in Windows 10.", "Look at the Baseboard Manufacturer physically on the motherboard and call them.", "Click the 'File' menu in the System Information tool, select 'Export', and save it as a text file to send them.", "Copy the ISO file to a flash drive and mail it."], a: "Click the 'File' menu in the System Information tool, select 'Export', and save it as a text file to send them." },
+            { q: "You are about to assemble a PC and need to attach a component that requires a 4-pin connection to give power directly to the Motherboard. Which device's cable will you be plugging into the ATX 4-Pin Power Connector?", options: ["The Hard Disk Drive", "The Power Supply", "The CPU / Microprocessor", "The Back Panel"], a: "The Power Supply" },
+            { q: "You have downloaded an ISO file of an operating system but your computer has no optical drive. To make a bootable USB installer to run automatically upon turning on the PC, what two steps must you combine according to the materials?", options: ["Run a netinstall and connect the USB to the IDE port.", "Open the ISO with MS Word and save it directly to the flash drive.", "Use the Rufus software, then change the boot order of drives in the computer's BIOS.", "Solder the flash drive directly to the motherboard and press F2."], a: "Use the Rufus software, then change the boot order of drives in the computer's BIOS." },
+            { q: "Contrast the functions of an AVR and a UPS. Which statement accurately reflects the difference based on their definitions?", options: ["An AVR provides emergency backup battery power, while a UPS connects directly to the 20-pin ATX connector.", "An AVR manages data flow between peripherals, while a UPS cools down the motherboard.", "An AVR maintains output voltage within specified values despite line variations, whereas a UPS specifically provides emergency power when the input source fails.", "An AVR is used for network installations, while a UPS is used for physical installations via ISO."], a: "An AVR maintains output voltage within specified values despite line variations, whereas a UPS specifically provides emergency power when the input source fails." },
+            { q: "Read carefully: 'Because code is generally copied/generated in multiple locations, uninstallation usually involves more than just erasing the program folder.' Based on this, why is merely deleting a program's folder an incomplete way to remove software?", options: ["Because the physical hardware still expects the software to exist.", "Because an uninstallation may also require modifying or deleting registry files and other system code placed outside the program folder.", "Because the ISO image will automatically restore the erased folder.", "Because the operating system will crash without the erased folder."], a: "Because an uninstallation may also require modifying or deleting registry files and other system code placed outside the program folder." },
+            { q: "What is the logical relationship between the BIOS setup utility and the installation of a new Operating System via a USB drive?", options: ["The BIOS acts as the word processor used to write the OS code.", "The BIOS must be configured to change the boot order so the computer reads the USB drive installation files automatically upon startup.", "The BIOS is bypassed entirely when using the Windows USB/DVD Download Tool.", "The BIOS is the physical chip that stores the downloaded ISO file."], a: "The BIOS must be configured to change the boot order so the computer reads the USB drive installation files automatically upon startup." },
+            { q: "If an installer fails to properly prepare a program for execution, which of the following could be a reason?", options: ["The user failed to install a minimal system over the network first.", "The computer did not meet the system requirements, or other programs were left running and interfered.", "The user pressed F2 instead of DEL to open the installation wizard.", "The user exported their system specs while the setup was running."], a: "The computer did not meet the system requirements, or other programs were left running and interfered." },
+            { q: "How does a custom-developed software fundamentally differ from a general application software like Microsoft Office?", options: ["Custom software is exclusively freeware, while general applications are commercial.", "Custom software runs without an operating system, while general applications need one.", "General applications are developed for any organization, whereas customized software is specifically developed to cater to the specific needs of a particular group.", "General applications only use IDE ports, while custom software uses SATA ports."], a: "General applications are developed for any organization, whereas customized software is specifically developed to cater to the specific needs of a particular group." }
+        ],
+        tf: [
+            { q: "The term 'hardware' refers to the set of programs that make use of the machine for performing various functions.", a: "False" },
+            { q: "An ISO image is a single file that acts as a perfect representation of an entire CD, DVD, or BD.", a: "True" },
+            { q: "A computer case is a plastic or metal enclosure that houses most of the computer components.", a: "True" },
+            { q: "The IDE port on a motherboard is used to connect a monitor to the system.", a: "False" },
+            { q: "The Anti-static Wrist Strap or Wrist Band is used to discharge your body’s static electricity.", a: "True" },
+            { q: "Application software, such as word processing programs, can communicate directly with the computer hardware without needing an operating system.", a: "False" },
+            { q: "A chipset is a set of electronic components in an integrated circuit that manages data flow between the processor, memory, and peripherals.", a: "True" },
+            { q: "Software can only be sold commercially and is never developed and distributed freely by programmers.", a: "False" },
+            { q: "The CPU socket is a mechanical component that requires soldering every time a microprocessor is placed or replaced.", a: "False" },
+            { q: "The Windows USB/DVD Download Tool allows you to install Windows without needing an existing operating system running on your computer.", a: "True" },
+            { q: "If an application installer prompts you to reboot the computer after finishing the installation process, you should ignore it and open the application immediately.", a: "False" },
+            { q: "To see a pie chart representation of your free hard disk space on Windows 10/11, you must right-click on the drive and select Properties.", a: "True" },
+            { q: "If the main power fails in your home, having an Automatic Voltage Regulator (AVR) will provide the emergency battery power needed to keep your PC running.", a: "False" },
+            { q: "When configuring the BIOS on an ASRock motherboard, you can usually press F2 or the DEL key to enter the Setup Utility.", a: "True" },
+            { q: "To determine if you have a 32-bit (x86) or 64-bit (x64) processor, you should check the 'System type' specification in your computer settings.", a: "True" },
+            { q: "Because an installation typically involves generating code and registry files in multiple locations, uninstalling software is as simple as deleting the main program folder.", a: "False" },
+            { q: "Both the 4-Pin and 20-Pin ATX Power Connectors serve the same overarching purpose: routing power from the Power Supply to the Motherboard.", a: "True" },
+            { q: "General application software can never be customized or tailor-fitted; only fully customized software built from scratch can meet specific organizational needs.", a: "False" },
+            { q: "Changing the boot order in the BIOS is necessary when installing an OS from a flash drive because it instructs the system to look for an installer on the USB device before trying to load from the blank hard drive.", a: "True" },
+            { q: "An older IDE cable can connect perfectly with a modern SATA connector without any adapters because they serve the exact same data transfer function.", a: "False" }
+        ],
+        ident: [
+            { q: "A/An __________ is a programmable machine designed to perform arithmetic and logical operations automatically and sequentially.", a: ["COMPUTER"] },
+            { q: "The physical machine itself and its connected devices such as the monitor, keyboard, and mouse are collectively categorized as __________.", a: ["HARDWARE"] },
+            { q: "The __________ is a plastic or metal enclosure that houses most of the internal computer parts or components.", a: ["CASE", "COMPUTER CASE"] },
+            { q: "The most common freeware tool used to create a bootable flash drive from an ISO file is called __________.", a: ["WINDOWS", "WINDOWS USB/DVD DOWNLOAD TOOL", "RUFUS"] },
+            { q: "A/An __________ is a piece of software that simplifies the process of installing software by providing a step-by-step process.", a: ["INSTALLER"] },
+            { q: "The main software that controls access to all hardware and allows application software to function is called the __________.", a: ["OPERATING SYSTEM", "OS"] },
+            { q: "The __________ slot, sometimes numbering 2 to 4 on a motherboard, determines the type of RAM used with the computer.", a: ["MEMORY", "RAM"] },
+            { q: "An installation of a program from a shared network resource, sometimes requiring a minimal system download first, is known as a __________ installation (or netinstall).", a: ["NETWORK"] },
+            { q: "The __________ on a motherboard provides external Input and Output connection ports for devices like mice, keyboards, and network cables.", a: ["BACK PANEL"] },
+            { q: "The manual or the __________ file contains exact instructions on how to install a program and is usually found in the same directory as the installation files.", a: ["README"] },
+            { q: "After pressing the designated key to enter the BIOS Setup Utility, when you are finished making changes, you should choose the '__________ & Exit' option to keep your modifications.", a: ["SAVE"] },
+            { q: "To check your installed graphics adapter, you need to open the Device Manager and expand the '__________ adapters' section.", a: ["DISPLAY"] },
+            { q: "If you want to install software on a brand-new custom-built PC using a USB drive, you must access the BIOS and change the __________ order of the drives.", a: ["BOOT"] },
+            { q: "While an AVR maintains output voltage within specified values against variations, a/an __________ is the specific electrical apparatus that provides actual emergency power when the mains power fails.", a: ["UNINTERRUPTIBLE POWER SUPPLY", "UPS"] },
+            { q: "Because uninstallation requires more than just erasing a folder, a complete removal process often dictates that system code and __________ files may need to be modified or deleted.", a: ["REGISTRY"] }
+        ],
+        // =========================================================================
+        // ADMIN: PASTE YOUR IMAGE LINKS BELOW inside the imgUrl quotation marks
+        // =========================================================================
+        image: [
+            { imgName: "PCI SLOT", imgUrl: "https://upload.wikimedia.org/wikipedia/commons/6/67/PCI_Slots_Digon3.JPG", a: ["PCI SLOT", "PCI"] },
+            { imgName: "FRONT PANEL CONNECTORS", imgUrl: "https://i.ytimg.com/vi/nBJJj3FB2P8/sddefault.jpg", a: ["FRONT PANEL CONNECTORS", "FRONT PANEL"] },
+            { imgName: "CMOS BATTERY", imgUrl: "https://static0.xdaimages.com/wordpress/wp-content/uploads/wm/2023/08/cmos-battery.jpg", a: ["CMOS BATTERY", "CMOS"] },
+            { imgName: "BACK PANEL", imgUrl: "https://t4.ftcdn.net/jpg/02/23/97/21/360_F_223972168_LuEekyU5T4LRiFJahCqV7vHObMw2W1th.jpg", a: ["BACK PANEL"] },
+            { imgName: "SSD", imgUrl: "https://www.verbatim-europe.com/files/products/vi550-s3-ssd/49353-vi550-s3-1tb-no-shadow.png", a: ["SSD", "SOLID STATE DRIVE"] },
+            { imgName: "LAN CARD", imgUrl: "https://media.rs-online.com/F8988532-01.jpg", a: ["LAN CARD", "NETWORK CARD", "NIC"] },
+            { imgName: "PS/2 MOUSE", imgUrl: "https://www.communica.co.za/cdn/shop/products/mouse-ps2-580739.jpg?v=1699450461", a: ["PS/2 MOUSE", "PS2 MOUSE"] },
+            { imgName: "USB", imgUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9X-xs-Lmc2Rd9DeKs9UuYzVgW8L5W8_9bUfppiVECJQ&s=10", a: ["USB", "USB HEAD"] },
+            { imgName: "VGA CABLE", imgUrl: "https://cafe24img.poxo.com/channelcomph/Product/Images/4/CHCHNLAA0004055/Editor/7428875335226a7cf511c3.jpg", a: ["VGA CABLE"] },
+            { imgName: "SATA CABLE", imgUrl: "https://ph-live-01.slatic.net/p/475f6a3afb147380ce9c15d642d6d24e.jpg", a: ["SATA CABLE", "SATA"] },
+            { imgName: "POWER SUPPLY UNIT", imgUrl: "https://www.technologyuk.net/computing/computer-hardware/images/psu01.jpg", a: ["POWER SUPPLY UNIT", "POWER SUPPLY", "PSU"] },
+            { imgName: "ANTI-STATIC WRIST STRAP", imgUrl: "https://widaco.net/wp-content/uploads/2013/09/W0000012.jpg", a: ["ANTI-STATIC WRIST STRAP", "ANTISTATIC WRIST STRAP"] },
+            { imgName: "MOTHERBOARD", imgUrl: "https://www.computerhope.com/jargon/m/motherboard-small.png", a: ["MOTHERBOARD"] },
+            { imgName: "GRAPHICS CARD", imgUrl: "https://ms.codes/cdn/shop/articles/71PCEkj9DYS_cbd2cd93-3a93-400b-8db4-efdf187c10cb.jpg?v=1707817718", a: ["GRAPHICS CARD", "VIDEO CARD", "GPU"] },
+            { imgName: "CPU SOCKET", imgUrl: "https://images.stockcake.com/public/6/9/0/6908a61a-8cdb-486c-ab9f-c87e816dc629_large/advanced-cpu-socket-stockcake.jpg", a: ["CPU SOCKET", "PROCESSOR SOCKET"] }
+        ]
+    };
+
+    const fixedIdentQuestion = { 
+        q: "What is the name of your CSS Trainer/Teacher?", 
+        a: ["LEMUEL COLEZA CONDES", "LEMUEL CONDES", "SIR LEMUEL", "LEMUEL C. CONDES", "MR. CONDES"], 
+        points: 5 
+    };
+
+    // --- STATE ---
+    let examState = {
+        student: {},
+        startTime: null,
+        timeLimitSec: 45 * 60,
+        timerInterval: null,
+        answers: { mc: [], tf: [], ident: [], image: [] },
+        shuffledData: { mc: [], tf: [], ident: [], image: [] },
+        currentPage: 0, // 0 is prep, 1=mc, 2=tf, 3=id, 4=img, 5=result, 6-9=review
+        isReviewMode: false
+    };
+
+    // --- UTILITIES ---
+    function shuffleArray(array) {
+        let arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function buildShuffledExam() {
+        // Shuffle MC and their options
+        examState.shuffledData.mc = shuffleArray(rawData.mc).map(q => {
+            return { ...q, shuffledOptions: shuffleArray(q.options) };
+        });
+        
+        // Shuffle TF
+        examState.shuffledData.tf = shuffleArray(rawData.tf);
+        
+        // Shuffle Ident and PREPEND the fixed question
+        let shuffledIdent = shuffleArray(rawData.ident).map(q => ({...q, points: 1}));
+        examState.shuffledData.ident = [{ ...fixedIdentQuestion }, ...shuffledIdent];
+        
+        // Shuffle Images
+        examState.shuffledData.image = shuffleArray(rawData.image);
+    }
+
+    // --- DOM GENERATION ---
+    function generateExamHTML() {
+        const container = document.getElementById('quiz-pages-container');
+        let html = '';
+
+        // Page 2: MC
+        html += `<div id="page-2" class="page">
+            <h2>Test 1: Multiple-Choice (30 items)</h2>
+            <p>Directions: Read each question carefully and select the best answer.</p><hr>`;
+        examState.shuffledData.mc.forEach((q, i) => {
+            html += `<div class="question-card" id="mc-card-${i}">
+                <div class="question-text">${i + 1}. ${q.q}</div>
+                <div class="options-grid">`;
+            q.shuffledOptions.forEach((opt, j) => {
+                html += `<label class="option-label">
+                    <input type="radio" name="mc-${i}" value="${opt.replace(/"/g, '&quot;')}">
+                    ${opt}
+                </label>`;
+            });
+            html += `</div><div class="review-feedback" id="mc-feed-${i}"></div></div>`;
+        });
+        html += `<div class="nav-buttons">
+            <button class="btn-secondary nav-btn" onclick="navTo(1)" id="mc-prev" style="display:none;">Previous</button>
+            <button class="btn-primary nav-btn" onclick="navTo(3)" id="mc-next">Next Part</button>
+        </div></div>`;
+
+        // Page 3: TF
+        html += `<div id="page-3" class="page">
+            <h2>Test 2: True or False (20 items)</h2>
+            <p>Directions: Select True if the statement is correct, or False if incorrect.</p><hr>`;
+        examState.shuffledData.tf.forEach((q, i) => {
+            html += `<div class="question-card" id="tf-card-${i}">
+                <div class="question-text">${i + 1}. ${q.q}</div>
+                <div class="options-grid" style="grid-template-columns: 1fr 1fr;">
+                    <label class="option-label"><input type="radio" name="tf-${i}" value="True"> True</label>
+                    <label class="option-label"><input type="radio" name="tf-${i}" value="False"> False</label>
+                </div><div class="review-feedback" id="tf-feed-${i}"></div></div>`;
+        });
+        html += `<div class="nav-buttons">
+            <button class="btn-secondary nav-btn" onclick="navTo(2)" id="tf-prev">Previous</button>
+            <button class="btn-primary nav-btn" onclick="navTo(4)" id="tf-next">Next Part</button>
+        </div></div>`;
+
+        // Page 4: Identification
+        html += `<div id="page-4" class="page">
+            <h2>Test 3: Identification / Fill-in-the-Blank (16 items)</h2>
+            <p>Directions: Identify the exact term. <b>Answers must be in ALL CAPS.</b></p><hr>`;
+        examState.shuffledData.ident.forEach((q, i) => {
+            let ptBadge = q.points === 5 ? `<span class="points-badge">5 Points</span>` : '';
+            html += `<div class="question-card" id="id-card-${i}">
+                <div class="question-text">${i + 1}. ${q.q} ${ptBadge}</div>
+                <input type="text" class="uppercase-input" name="id-${i}" autocomplete="off">
+                <div class="review-feedback" id="id-feed-${i}"></div>
+            </div>`;
+        });
+        html += `<div class="nav-buttons">
+            <button class="btn-secondary nav-btn" onclick="navTo(3)" id="id-prev">Previous</button>
+            <button class="btn-primary nav-btn" onclick="navTo(5)" id="id-next">Next Part</button>
+        </div></div>`;
+
+        // Page 5: Image Identification
+        html += `<div id="page-5" class="page">
+            <h2>Test 4: Image Identification (15 items)</h2>
+            <p>Directions: Identify the component shown.</p><hr>`;
+        examState.shuffledData.image.forEach((q, i) => {
+            // Checks if user pasted a link, otherwise fallback to placeholder generator.
+            let displayUrl = (q.imgUrl === "PASTE_YOUR_LINK_HERE" || q.imgUrl.trim() === "") 
+                ? `https://via.placeholder.com/400x250?text=${encodeURIComponent(q.imgName)}` 
+                : q.imgUrl;
+
+            html += `<div class="question-card" id="img-card-${i}">
+                <div class="question-text">${i + 1}. Identify this component:</div>
+                <img src="${displayUrl}" alt="Component Image" class="image-display" 
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="image-placeholder" style="display:none;">[IMAGE FAILED TO LOAD: ${q.imgName}]</div>
+                <input type="text" class="uppercase-input" name="img-${i}" autocomplete="off" placeholder="YOUR ANSWER HERE">
+                <div class="review-feedback" id="img-feed-${i}"></div>
+            </div>`;
+        });
+        html += `<div class="nav-buttons">
+            <button class="btn-secondary nav-btn" onclick="navTo(4)" id="img-prev">Previous</button>
+            <button class="btn-success nav-btn" onclick="confirmSubmit()" id="img-next">Submit Examination</button>
+        </div></div>`;
+
+        // Page 6: Results
+        html += `<div id="page-6" class="page">
+            <div class="results-header">
+                <h2>Examination Results</h2>
+                <div id="result-status"></div>
+                <div class="score-display" id="final-score">0 / 85</div>
+                <p id="result-message"></p>
+            </div>
+            <div class="student-info-card" id="student-summary"></div>
+            <div class="nav-buttons" style="justify-content: center; gap: 1rem;">
+                <button class="btn-primary" onclick="startReview()">Review Answers</button>
+                <button class="btn-secondary" onclick="location.reload()">Retake Quiz</button>
+            </div>
+        </div>`;
+
+        container.innerHTML = html;
+        
+        // Auto-uppercase listener for text inputs
+        document.querySelectorAll('.uppercase-input').forEach(input => {
+            input.addEventListener('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
+    }
+
+    // --- LOGIC ---
+    function startExam() {
+        const ln = document.getElementById('lastName').value.trim();
+        const fn = document.getElementById('firstName').value.trim();
+        const sec = document.getElementById('section').value;
+
+        if (!ln || !fn || !sec) {
+            alert('Please fill out your Last Name, First Name, and Section to begin.');
+            return;
+        }
+
+        examState.student = {
+            lastName: ln,
+            firstName: fn,
+            middleName: document.getElementById('middleName').value.trim(),
+            section: sec,
+            timestamp: new Date().toLocaleString()
+        };
+
+        buildShuffledExam();
+        generateExamHTML();
+        navTo(2); // Go to MC
+        
+        // Start Timer
+        startTimer();
+    }
+
+    function navTo(pageIndex) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(`page-${pageIndex}`).classList.add('active');
+        examState.currentPage = pageIndex;
+        window.scrollTo(0, 0);
+
+        if(examState.isReviewMode) {
+            setupReviewModeNavigation(pageIndex);
+        }
+    }
+
+    function startTimer() {
+        const timerDisplay = document.getElementById('global-timer');
+        examState.timerInterval = setInterval(() => {
+            examState.timeLimitSec--;
+            let m = Math.floor(examState.timeLimitSec / 60);
+            let s = examState.timeLimitSec % 60;
+            timerDisplay.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
+            if (examState.timeLimitSec <= 0) {
+                clearInterval(examState.timerInterval);
+                alert("Time is up! Your examination will be automatically submitted.");
+                processSubmission();
+            }
+        }, 1000);
+    }
+
+    function confirmSubmit() {
+        if(confirm("Are you sure you want to submit your examination? You cannot change your answers after submitting.")) {
+            processSubmission();
+        }
+    }
+
+    function processSubmission() {
+        clearInterval(examState.timerInterval);
+        
+        let score = 0;
+        const totalPoints = 85; // 30 + 20 + (1x15 + 5) + 15
+
+        // Save Answers & Grade MC (1pt each)
+        examState.shuffledData.mc.forEach((q, i) => {
+            const selected = document.querySelector(`input[name="mc-${i}"]:checked`);
+            const ans = selected ? selected.value : "";
+            examState.answers.mc.push(ans);
+            if (ans === q.a) score += 1;
+        });
+
+        // Grade TF (1pt each)
+        examState.shuffledData.tf.forEach((q, i) => {
+            const selected = document.querySelector(`input[name="tf-${i}"]:checked`);
+            const ans = selected ? selected.value : "";
+            examState.answers.tf.push(ans);
+            if (ans === q.a) score += 1;
+        });
+
+        // Grade Ident
+        examState.shuffledData.ident.forEach((q, i) => {
+            const val = document.querySelector(`input[name="id-${i}"]`).value.trim().toUpperCase();
+            examState.answers.ident.push(val);
+            if (q.a.includes(val)) score += q.points;
+        });
+
+        // Grade Image (1pt each)
+        examState.shuffledData.image.forEach((q, i) => {
+            const val = document.querySelector(`input[name="img-${i}"]`).value.trim().toUpperCase();
+            examState.answers.image.push(val);
+            if (q.a.includes(val)) score += 1;
+        });
+
+        showResults(score, totalPoints);
+    }
+
+    function showResults(score, total) {
+        navTo(6);
+        document.getElementById('global-timer').innerHTML = `Score: ${score}/${total}`;
+        document.getElementById('final-score').textContent = `${score} / ${total}`;
+        
+        const passed = score >= 68;
+        const statusEl = document.getElementById('result-status');
+        const msgEl = document.getElementById('result-message');
+        
+        if (passed) {
+            statusEl.innerHTML = `<span class="status-pass">PASSED</span>`;
+            msgEl.textContent = "Congratulations! You have successfully passed the CSS COC 1 Fundamentals Assessment.";
+        } else {
+            statusEl.innerHTML = `<span class="status-fail">FAILED</span>`;
+            msgEl.textContent = "Do not be discouraged. Review your materials, focus on the incorrect items, and try again.";
+        }
+
+        let fullName = `${examState.student.lastName}, ${examState.student.firstName} ${examState.student.middleName}`.trim();
+        document.getElementById('student-summary').innerHTML = `
+            <strong>Examinee:</strong> ${fullName}<br>
+            <strong>Section:</strong> ${examState.student.section}<br>
+            <strong>Date/Time Submitted:</strong> ${examState.student.timestamp}
+        `;
+    }
+
+    function startReview() {
+        examState.isReviewMode = true;
+        
+        // Disable all inputs
+        document.querySelectorAll('input').forEach(inp => inp.disabled = true);
+
+        // Apply visual feedback MC
+        examState.shuffledData.mc.forEach((q, i) => {
+            const userAns = examState.answers.mc[i];
+            const isCorrect = userAns === q.a;
+            const card = document.getElementById(`mc-card-${i}`);
+            card.classList.add(isCorrect ? 'review-correct' : 'review-incorrect');
+            
+            let feedHTML = `<div class="user-answer-text">Your Answer: ${userAns || 'No Answer'}</div>`;
+            if (!isCorrect) feedHTML += `<div class="correct-answer-text">Correct Answer: ${q.a}</div>`;
+            document.getElementById(`mc-feed-${i}`).innerHTML = feedHTML;
+        });
+
+        // Apply visual feedback TF
+        examState.shuffledData.tf.forEach((q, i) => {
+            const userAns = examState.answers.tf[i];
+            const isCorrect = userAns === q.a;
+            const card = document.getElementById(`tf-card-${i}`);
+            card.classList.add(isCorrect ? 'review-correct' : 'review-incorrect');
+            
+            let feedHTML = `<div class="user-answer-text">Your Answer: ${userAns || 'No Answer'}</div>`;
+            if (!isCorrect) feedHTML += `<div class="correct-answer-text">Correct Answer: ${q.a}</div>`;
+            document.getElementById(`tf-feed-${i}`).innerHTML = feedHTML;
+        });
+
+        // Apply visual feedback Ident
+        examState.shuffledData.ident.forEach((q, i) => {
+            const userAns = examState.answers.ident[i];
+            const isCorrect = q.a.includes(userAns);
+            const card = document.getElementById(`id-card-${i}`);
+            card.classList.add(isCorrect ? 'review-correct' : 'review-incorrect');
+            
+            if (!isCorrect) {
+                document.getElementById(`id-feed-${i}`).innerHTML = `<div class="correct-answer-text">Accepted Answer(s): ${q.a.join(' / ')}</div>`;
+            }
+        });
+
+        // Apply visual feedback Image
+        examState.shuffledData.image.forEach((q, i) => {
+            const userAns = examState.answers.image[i];
+            const isCorrect = q.a.includes(userAns);
+            const card = document.getElementById(`img-card-${i}`);
+            card.classList.add(isCorrect ? 'review-correct' : 'review-incorrect');
+            
+            if (!isCorrect) {
+                document.getElementById(`img-feed-${i}`).innerHTML = `<div class="correct-answer-text">Accepted Answer(s): ${q.a.join(' / ')}</div>`;
+            }
+        });
+
+        navTo(2); // Jump back to page 2 (MC) to start reviewing
+    }
+
+    function setupReviewModeNavigation(pageIndex) {
+        // Adjust navigation buttons for review mode
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            if (btn.textContent.includes('Submit Examination')) {
+                btn.textContent = "Finish Review";
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-primary');
+                btn.onclick = () => navTo(6);
+            }
+            if (btn.id === "mc-prev") {
+                btn.style.display = "block";
+                btn.textContent = "Back to Results";
+                btn.onclick = () => navTo(6);
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
