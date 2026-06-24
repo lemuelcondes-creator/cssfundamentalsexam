@@ -136,7 +136,7 @@
             <div id="page-5" class="page-container hidden-page">
                 <div class="mb-6 flex flex-col md:flex-row items-baseline justify-between border-b border-blue-200 pb-4">
                     <h2 class="text-2xl font-bold text-blue-900">Test IV: Image Identification</h2>
-                    <p class="text-slate-600 font-medium">15 Items • Identify the component shown</p>
+                    <p class="text-slate-600 font-medium">15 Items • Identify the component shown. Avoid acronyms.</p>
                 </div>
                 <div id="imgid-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Image ID Items injected here by JS -->
@@ -313,21 +313,21 @@
 
         const imgData = [
             // PROGRAMMERS NOTE: Add image URLs in the 'imgSrc' property
-            { placeholder: "Image of a PCI SLOT", ans: "PCI SLOT", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=PCI+SLOT+IMAGE" }, // ADD IMAGE LINK HERE
-            { placeholder: "Image of FRONT PANEL CONNECTORS", ans: "FRONT PANEL CONNECTORS", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=FRONT+PANEL+CONN" }, // ADD IMAGE LINK HERE
-            { placeholder: "Image of CMOS BATTERY", ans: "CMOS BATTERY", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=CMOS+BATTERY" }, // ADD IMAGE LINK HERE
-            { placeholder: "Image of BACK PANEL", ans: "BACK PANEL", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=BACK+PANEL" }, // ADD IMAGE LINK HERE
-            { placeholder: "Image of an SSD", ans: "SSD", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=SSD" }, // ADD IMAGE LINK HERE
-            { placeholder: "Image of a LAN CARD", ans: "LAN CARD", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=LAN+CARD" }, // ADD IMAGE LINK HERE
-            { placeholder: "Image of a PS/2 MOUSE port/plug", ans: "PS/2 MOUSE", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=PS2+MOUSE" }, // ADD IMAGE LINK HERE
-            { placeholder: "Image of a USB port/plug", ans: "USB", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=USB" }, // ADD IMAGE LINK HERE
-            { placeholder: "Image of a VGA CABLE", ans: "VGA CABLE", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=VGA+CABLE" }, // ADD IMAGE LINK HERE
-            { placeholder: "Image of a SATA CABLE", ans: "SATA CABLE", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=SATA+CABLE" }, // ADD IMAGE LINK HERE
-            { placeholder: "Image of a POWER SUPPLY UNIT", ans: "POWER SUPPLY UNIT", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=POWER+SUPPLY" }, // ADD IMAGE LINK HERE
-            { placeholder: "Image of an ANTI-STATIC WRIST STRAP", ans: "ANTI-STATIC WRIST STRAP", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=ANTI-STATIC+STRAP" }, // ADD IMAGE LINK HERE
-            { placeholder: "Image of a MOTHERBOARD", ans: "MOTHERBOARD", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=MOTHERBOARD" }, // ADD IMAGE LINK HERE
-            { placeholder: "Image of a GRAPHICS CARD", ans: "GRAPHICS CARD", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=GRAPHICS+CARD" }, // ADD IMAGE LINK HERE
-            { placeholder: "Image of a CPU SOCKET", ans: "CPU SOCKET", imgSrc: "https://via.placeholder.com/300x200/e2e8f0/475569?text=CPU+SOCKET" } // ADD IMAGE LINK HERE
+            { placeholder: "Image of a PCI SLOT", ans: "PCI SLOT", imgSrc: "https://upload.wikimedia.org/wikipedia/commons/6/67/PCI_Slots_Digon3.JPG" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of FRONT PANEL CONNECTORS", ans: "FRONT PANEL CONNECTORS", imgSrc: "https://i.ytimg.com/vi/nBJJj3FB2P8/sddefault.jpg" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of CMOS BATTERY", ans: "CMOS BATTERY", imgSrc: "https://static0.xdaimages.com/wordpress/wp-content/uploads/wm/2023/08/cmos-battery.jpg" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of BACK PANEL", ans: "BACK PANEL", imgSrc: "https://t4.ftcdn.net/jpg/02/23/97/21/360_F_223972168_LuEekyU5T4LRiFJahCqV7vHObMw2W1th.jpg" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of an SSD", ans: "SSD", imgSrc: "https://www.verbatim-europe.com/files/products/vi550-s3-ssd/49353-vi550-s3-1tb-no-shadow.png" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a LAN CARD", ans: "LAN CARD", imgSrc: "https://media.rs-online.com/F8988532-01.jpg" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a PS/2 MOUSE port/plug", ans: "PS/2 MOUSE", imgSrc: "https://www.communica.co.za/cdn/shop/products/mouse-ps2-580739.jpg?v=1699450461" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a USB port/plug", ans: "USB", imgSrc: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9X-xs-Lmc2Rd9DeKs9UuYzVgW8L5W8_9bUfppiVECJQ&s=10" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a VGA CABLE", ans: "VGA CABLE", imgSrc: "https://cafe24img.poxo.com/channelcomph/Product/Images/4/CHCHNLAA0004055/Editor/7428875335226a7cf511c3.jpg" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a SATA CABLE", ans: "SATA CABLE", imgSrc: "https://ph-live-01.slatic.net/p/475f6a3afb147380ce9c15d642d6d24e.jpg" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a POWER SUPPLY UNIT", ans: "POWER SUPPLY UNIT", imgSrc: "https://www.technologyuk.net/computing/computer-hardware/images/psu01.jpg" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of an ANTI-STATIC WRIST STRAP", ans: "ANTI-STATIC WRIST STRAP", imgSrc: "https://widaco.net/wp-content/uploads/2013/09/W0000012.jpg" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a MOTHERBOARD", ans: "MOTHERBOARD", imgSrc: "https://www.computerhope.com/jargon/m/motherboard-small.png" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a GRAPHICS CARD", ans: "GRAPHICS CARD", imgSrc: "https://ms.codes/cdn/shop/articles/71PCEkj9DYS_cbd2cd93-3a93-400b-8db4-efdf187c10cb.jpg?v=1707817718" }, // ADD IMAGE LINK HERE
+            { placeholder: "Image of a CPU SOCKET", ans: "CPU SOCKET", imgSrc: "https://images.stockcake.com/public/6/9/0/6908a61a-8cdb-486c-ab9f-c87e816dc629_large/advanced-cpu-socket-stockcake.jpg" } // ADD IMAGE LINK HERE
         ];
 
         // --- STATE VARIABLES ---
